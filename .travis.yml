@@ -1,0 +1,11 @@
+language: node_js
+node_js:
+- stable
+deploy:
+  provider: heroku
+  app: east-ukraine-company-back
+  api_key:
+    secure: sWo0Oin5In7PctUH1M3jCCcRpV13Z523fr2j5xMKOliZefqbCey6t85IrrAUZmDrtep/UedMc+Gvzx4PPayR4v7EAKtU31edGFU5aozgSRpmQIjTIrDevkoizl4WJ+xTUHlP1uFgYK/21W2a+EQIjlFKm9y5WB08OSfWXRpuzW9nkbn1UDuWu+S3a1bj4WxWLVVwH1TzbMM+lw98IU8oSrcf6yrvfSziOuAxl1A5+x3FdcD2SYBbofnKOvl9YCzEOyKVOhqjFhdjGQ/e7GkBDAY5CJO02yAA2Elx6zQHG7HRrvpnLOYi0WRN/Qf9FjgZTrBUc9xE4uHfLzCpydkrjr38Y/6pr0BE348GTx4Rqr0+SRptIaI2zr6yOUp+F32WNLYNj64sqaLMGH0YlZaRtT1GA0qKbiSsRmXj9eu6+5FXN2rOpngifahvoU2mOyRQeLhF7+wbVnoJy64vlmgWrk6esxERzeFCSxTICNlY0d8PZ9eMdpRnm9w/ozpL07c7IEF5D5E25OMn+oAyggDYhtkXA4ermdkDr8sRKc0hDq6GOLx0lEBOzPF0WuXJcY9u0BVUXAehjMC0pP8mRi5sViBJvIwXUOeaxi9wvRb817nHCa6HjDTnqYXaXP7FxXqFVbXmq5m7+5pI+QjdTTuGivnmQnd0K7d7tY1taiI572o=
+  on: master
+notifications:
+  webhooks: https://fathomless-fjord-24024.herokuapp.com/notify?secret=east-ukraine-secret
