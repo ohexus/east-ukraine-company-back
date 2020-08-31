@@ -10,6 +10,7 @@ import authMiddleware from './middlewares/auth.middleware';
 
 import authRouter from './routes/auth.routes';
 import userRouter from './routes/user.routes';
+import unitRouter from './routes/unit.routes';
 
 const app: express.Application = express();
 
@@ -42,6 +43,7 @@ app.use('/api/auth', authRouter);
 app.use(authMiddleware);
 
 app.use('/api/user/', userRouter);
+app.use('/api/unit/', unitRouter);
 
 // start server
 app.listen(process.env.PORT || PORT, () => {
