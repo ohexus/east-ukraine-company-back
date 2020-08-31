@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 
-import { IUserDoc } from '../interfaces/entities/IUser';
+import { UserDoc } from '../interfaces/entities/User';
 import {
   UserSignUpRequest,
   UserLogInRequest,
@@ -29,14 +29,14 @@ const userSchema: Schema = new Schema(
   { timestamps: true },
 );
 
-const UserModel = model<IUserDoc>('User', userSchema);
+const UserModel = model<UserDoc>('User', userSchema);
 
-export default class User extends UserModel {
-  static async createUser(user: UserSignUpRequest): Promise<IUserDoc | null> {
+export default class UserClass extends UserModel {
+  static async createUser(user: UserSignUpRequest): Promise<UserDoc | null> {
     try {
       const { username, email, password } = user;
 
-      const createdDoc: IUserDoc = await this.create({
+      const createdDoc: UserDoc = await this.create({
         username,
         email,
         password,
@@ -48,13 +48,13 @@ export default class User extends UserModel {
     }
   }
 
-  static async getAllUsers(): Promise<IUserDoc[]> {
-    const docs: IUserDoc[] = await this.find({});
+  static async getAllUsers(): Promise<UserDoc[]> {
+    const docs: UserDoc[] = await this.find({});
 
     return docs;
   }
 
-  static async getUser(user: UserLogInRequest): Promise<IUserDoc | null> {
+  static async getUser(user: UserLogInRequest): Promise<UserDoc | null> {
     try {
       const { login, password } = user;
 
@@ -64,7 +64,7 @@ export default class User extends UserModel {
 
       if (!login || !password) return null;
 
-      const foundDoc: IUserDoc | null = await this.findOne({
+      const foundDoc: UserDoc | null = await this.findOne({
         $or: [{ email: login }, { username: login }],
       });
 
@@ -74,11 +74,11 @@ export default class User extends UserModel {
     }
   }
 
-  static async getUserById(id: string): Promise<IUserDoc | null> {
+  static async getUserById(id: string): Promise<UserDoc | null> {
     try {
       if (!id) return null;
 
-      const foundDoc: IUserDoc | null = await this.findOne({ _id: id });
+      const foundDoc: UserDoc | null = await this.findOne({ _id: id });
 
       return foundDoc;
     } catch {
