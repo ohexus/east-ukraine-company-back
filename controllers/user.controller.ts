@@ -1,33 +1,20 @@
 import { Request, Response } from 'express';
+import ExtendedRequest from '../interfaces/requests/ExtendedRequest';
 
 import { LOGS } from '../constants';
 
 import { errorHandler, successResponse } from '../utils';
-import { IUserDoc } from '../interfaces/entities/IUser';
+import { UserDoc } from '../interfaces/entities/User';
 
 import UsersService from '../services/user.service';
 
-const getUserById = async (req: Request, res: Response) => {
-  // try {
-  //   const user = await User.findOne({ _id: req.params.id });
+const getCurrentUser = async (req: ExtendedRequest, res: Response) => {
+  if (!req.userId) return errorHandler(res, LOGS.ERROR.UNAUTHORIZED);
 
-  //   if (!user) return errorHandler(res, LOGS.ERROR.USER_NOT_EXIST);
-
-  //   return successResponse(res, STATUSES.RESPONSE.SUCCESS.DEFAULT, user);
-  // } catch (error) {
-  //   return errorHandler(res, error.message);
-  // }
-
-  // TODO update logs consts
-
-  const id = req.query.id?.toString();
-
-  if (!id) return errorHandler(res, LOGS.ERROR.USER_NOT_EXIST);
-
-  let user: IUserDoc | null;
+  let user: UserDoc | null;
 
   try {
-    user = await UsersService.getUserById(id);
+    user = await UsersService.getUserById(req.userId);
   } catch (error) {
     return errorHandler(res, error.message);
   }
@@ -38,9 +25,28 @@ const getUserById = async (req: Request, res: Response) => {
   return successResponse(res, LOGS.SUCCESS.LOGIN, user);
 };
 
+const getUserById = async (req: Request, res: Response) => {
+  const id = req.query.id?.toString();
+
+  if (!id) return errorHandler(res, LOGS.ERROR.USER_NOT_EXIST);
+
+  let user: UserDoc | null;
+
+  try {
+    user = await UsersService.getUserById(id);
+  } catch (error) {
+    return errorHandler(res, error.message);
+  }
+  if (!user) {
+    return errorHandler(res, LOGS.ERROR.USER_NOT_EXIST);
+  }
+
+  return successResponse(res, LOGS.SUCCESS.DEFAULT, user);
+};
+
 const getAllUsers = async (req: Request, res: Response) => {
   const users = await UsersService.getAllUsers();
-  return successResponse(res, LOGS.SUCCESS.LOGIN, users);
+  return successResponse(res, LOGS.SUCCESS.DEFAULT, users);
 };
 
 // const patchUpdateAvatar = async (req, res) => {
@@ -77,6 +83,7 @@ const getAllUsers = async (req: Request, res: Response) => {
 // };
 
 export {
+  getCurrentUser,
   getUserById,
   getAllUsers,
   // patchUpdateAvatar,

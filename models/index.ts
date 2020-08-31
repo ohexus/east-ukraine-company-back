@@ -1,9 +1,9 @@
-import User from './User.model';
+import UserClass from './User.model';
+import UnitClass from './Unit.model';
 // import Looting from './Looting.model';
-// import Unit from './Unit.model';
 
 export {
-  User,
+  UserClass,
+  UnitClass,
   // Looting,
-  // Unit
 };

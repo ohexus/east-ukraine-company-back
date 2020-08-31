@@ -13,7 +13,7 @@ import {
 import UsersService from '../services/user.service';
 
 import { UserSignUpRequest } from '../interfaces/requests/UserRequests';
-import { IUser, IUserDoc } from '../interfaces/entities/IUser';
+import { UserDoc } from '../interfaces/entities/User';
 
 const postSignUp = async (req: Request, res: Response) => {
   const { email, username, password }: UserSignUpRequest = req.body;
@@ -39,7 +39,7 @@ const postSignUp = async (req: Request, res: Response) => {
 
 const postLogin = async (req: Request, res: Response) => {
   const { login, password } = req.body;
-  let user: IUserDoc | null;
+  let user: UserDoc | null;
 
   try {
     user = await UsersService.getUser({ login, password });

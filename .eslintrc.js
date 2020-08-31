@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   env: {
     browser: true,
     commonjs: true,
@@ -27,5 +27,7 @@ module.exports = {
     'prefer-template': 'off',
     'no-path-concat': 'off',
     'one-var': 'off',
+    quotemark: [true, 'single'],
+    semicolon: [true],
   },
 };
