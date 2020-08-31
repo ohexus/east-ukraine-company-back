@@ -1,14 +1,15 @@
 import jwt from 'jsonwebtoken';
 import config from 'config';
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 
 import { LOGS } from '../constants';
 import { errorHandler } from '../utils';
 
 import userService from '../services/user.service';
+import ExtendedRequest from '../interfaces/requests/ExtendedRequest';
 
 export default async function authMiddleware(
-  req: Request,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -23,9 +24,9 @@ export default async function authMiddleware(
 
     const foundUser = await userService.getUserById(userId);
 
-    if (!foundUser) {
-      //   req.userId = userId;
-      // } else {
+    if (foundUser) {
+      req.userId = userId;
+    } else {
       return errorHandler(res, LOGS.ERROR.USER_NOT_EXIST);
     }
   } catch (error) {
