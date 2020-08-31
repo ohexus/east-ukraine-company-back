@@ -1,32 +1,32 @@
-import { User } from '../models';
+import { UserClass } from '../models';
 
 import {
   UserSignUpRequest,
   UserLogInRequest,
 } from '../interfaces/requests/UserRequests';
-import { IUserDoc } from '../interfaces/entities/IUser';
+import { UserDoc } from '../interfaces/entities/User';
 
 class UsersService {
-  async createUser(user: UserSignUpRequest): Promise<IUserDoc | null> {
-    const userDoc = await User.createUser(user);
+  async createUser(user: UserSignUpRequest): Promise<UserDoc | null> {
+    const userDoc = await UserClass.createUser(user);
 
     return userDoc;
   }
 
-  async getAllUsers(): Promise<IUserDoc[]> {
-    const userDocs = await User.getAllUsers();
+  async getAllUsers(): Promise<UserDoc[]> {
+    const userDocs = await UserClass.getAllUsers();
 
     return userDocs;
   }
 
-  async getUser(user: UserLogInRequest): Promise<IUserDoc | null> {
-    const userDoc = await User.getUser(user);
+  async getUser(user: UserLogInRequest): Promise<UserDoc | null> {
+    const userDoc = await UserClass.getUser(user);
 
     return userDoc;
   }
 
-  async getUserById(id: string): Promise<IUserDoc | null> {
-    const userDoc = await User.getUserById(id);
+  async getUserById(id: string): Promise<UserDoc | null> {
+    const userDoc = await UserClass.getUserById(id);
 
     return userDoc;
   }
