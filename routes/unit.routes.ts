@@ -2,7 +2,7 @@ import { Response, Router } from 'express';
 import ExtendedRequest from '../interfaces/requests/ExtendedRequest';
 import {
   postCreateUnit,
-  postRankUpUnit,
+  postPromoteUnit,
   getUnitById,
   getAllUnitsByUser,
   getAllUnits,
@@ -14,8 +14,8 @@ const router = Router();
 router.post('/create', (req: ExtendedRequest, res: Response) =>
   postCreateUnit(req, res),
 );
-router.post('/rankUp', (req: ExtendedRequest, res: Response) =>
-  postRankUpUnit(req, res),
+router.post('/promote', (req: ExtendedRequest, res: Response) =>
+  postPromoteUnit(req, res),
 );
 
 router.get('/all', (req: ExtendedRequest, res: Response) =>

@@ -70,7 +70,7 @@ export default class UnitClass extends UnitModel {
     return unitDocs;
   }
 
-  static async rankUpUnit(id: string): Promise<UnitDoc | null> {
+  static async promoteUnit(id: string): Promise<UnitDoc | null> {
     const unitDoc = await this.findOne({ _id: id });
 
     if (!unitDoc) return null;

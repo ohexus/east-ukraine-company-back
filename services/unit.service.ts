@@ -30,8 +30,8 @@ class UnitsService {
     return unitDocs;
   }
 
-  async rankUpUnit(unitId: string): Promise<UnitDoc | null> {
-    const unitDoc = await UnitClass.rankUpUnit(unitId);
+  async promoteUnit(unitId: string): Promise<UnitDoc | null> {
+    const unitDoc = await UnitClass.promoteUnit(unitId);
 
     return unitDoc;
   }

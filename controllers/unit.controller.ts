@@ -18,7 +18,7 @@ const postCreateUnit = async (req: ExtendedRequest, res: Response) => {
   }
 };
 
-const postRankUpUnit = async (req: ExtendedRequest, res: Response) => {
+const postPromoteUnit = async (req: ExtendedRequest, res: Response) => {
   const { unitId } = req.body;
 
   if (!unitId) return errorHandler(res, LOGS.ERROR.DEFAULT);
@@ -30,7 +30,7 @@ const postRankUpUnit = async (req: ExtendedRequest, res: Response) => {
       return errorHandler(res, LOGS.ERROR.UNIT_PROMOTE_UNABLE);
     }
 
-    const updatedUnit = await UnitService.rankUpUnit(unitId);
+    const updatedUnit = await UnitService.promoteUnit(unitId);
 
     return successResponse(res, LOGS.SUCCESS.UNIT_PROMOTE, updatedUnit);
   } catch (error) {
@@ -94,7 +94,7 @@ const postClearUnitsDB = async (req: ExtendedRequest, res: Response) => {
 
 export {
   postCreateUnit,
-  postRankUpUnit,
+  postPromoteUnit,
   getUnitById,
   getAllUnitsByUser,
   getAllUnits,
