@@ -60,5 +60,6 @@ typings/
 # dotidea folders used by webstorm
 .idea/
 
-# env
+#env
 local.json
+local.jsonc
