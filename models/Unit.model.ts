@@ -6,7 +6,7 @@ import genUnit from '../helpers/units/genUnit';
 
 const unitSchema = new Schema(
   {
-    created_by: { type: Types.ObjectId, ref: 'User', required: true },
+    createdBy: { type: Types.ObjectId, ref: 'User', required: true },
 
     name: { type: String, required: true },
     gender: { type: String, required: true },
@@ -44,7 +44,7 @@ export default class UnitClass extends UnitModel {
   }
 
   static async getAllUnitsByUser(userId: string): Promise<UnitDoc[]> {
-    return await this.find({ created_by: userId });
+    return await this.find({ createdBy: userId });
   }
 
   static async getAllUnits() {

@@ -5,7 +5,7 @@ import AvatarBuffer from '../AvatarBuffer';
 import { UnitRankKeys } from '../units/UnitRank';
 
 export interface Unit {
-  created_by: string;
+  createdBy: string;
 
   gender: Genders;
   name: string;

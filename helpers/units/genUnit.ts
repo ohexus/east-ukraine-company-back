@@ -27,7 +27,7 @@ export default function genUnit(
   };
 
   return {
-    created_by: userId,
+    createdBy: userId,
     name,
     gender,
     avatarBuffer,
