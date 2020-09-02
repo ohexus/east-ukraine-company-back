@@ -3,6 +3,7 @@ import { Document } from 'mongoose';
 import Genders from '../Genders';
 import AvatarBuffer from '../AvatarBuffer';
 import { UnitRankKeys } from '../units/UnitRank';
+import { UnitXp } from '../units/UnitXp';
 
 export interface Unit {
   createdBy: string;
@@ -15,10 +16,7 @@ export interface Unit {
   rank: UnitRankKeys;
   salary: number;
 
-  xp: {
-    current: number;
-    promotion: number;
-  };
+  xp: UnitXp;
 
   lootingId: string | null;
 }

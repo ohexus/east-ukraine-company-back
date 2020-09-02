@@ -1,9 +1,9 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import ExtendedRequest from '../interfaces/requests/ExtendedRequest';
 
 import { LOGS } from '../constants';
 
-import { errorHandler, successResponse } from '../utils';
+import { errorHandler, successResponse, validateUnitPromotion } from '../utils';
 import { UnitService } from '../services';
 
 const postCreateUnit = async (req: ExtendedRequest, res: Response) => {
@@ -15,6 +15,42 @@ const postCreateUnit = async (req: ExtendedRequest, res: Response) => {
     return successResponse(res, LOGS.SUCCESS.UNIT_CREATE, unit);
   } catch {
     return errorHandler(res, LOGS.ERROR.UNIT_CREATE);
+  }
+};
+
+const postRankUpUnit = async (req: ExtendedRequest, res: Response) => {
+  const { unitId } = req.body;
+
+  if (!unitId) return errorHandler(res, LOGS.ERROR.DEFAULT);
+
+  try {
+    const unit = await UnitService.getUnitById(unitId);
+
+    if (!validateUnitPromotion(unit)) {
+      return errorHandler(res, LOGS.ERROR.UNIT_PROMOTE_UNABLE);
+    }
+
+    const updatedUnit = await UnitService.rankUpUnit(unitId);
+
+    return successResponse(res, LOGS.SUCCESS.UNIT_PROMOTE, updatedUnit);
+  } catch (error) {
+    return errorHandler(res, LOGS.ERROR.UNIT_PROMOTE);
+  }
+};
+
+const getUnitById = async (req: ExtendedRequest, res: Response) => {
+  const { id } = req.params;
+
+  if (!id) return errorHandler(res, LOGS.ERROR.DEFAULT);
+
+  try {
+    const unit = await UnitService.getUnitById(id as string);
+
+    if (!unit) return errorHandler(res, LOGS.ERROR.UNIT_NOT_EXIST);
+
+    return successResponse(res, LOGS.SUCCESS.DEFAULT, unit);
+  } catch (error) {
+    return errorHandler(res, error.message);
   }
 };
 
@@ -30,14 +66,37 @@ const getAllUnitsByUser = async (req: ExtendedRequest, res: Response) => {
   }
 };
 
-const getAllUnits = async (req: Request, res: Response) => {
+const getAllUnits = async (req: ExtendedRequest, res: Response) => {
   try {
-    const users = await UnitService.getAllUnits();
+    const units = await UnitService.getAllUnits();
 
-    return successResponse(res, LOGS.SUCCESS.DEFAULT, users);
+    return successResponse(res, LOGS.SUCCESS.DEFAULT, units);
   } catch (error) {
     return errorHandler(res, LOGS.ERROR.GET_UNITS);
   }
 };
 
-export { postCreateUnit, getAllUnitsByUser, getAllUnits };
+const postClearUnitsDB = async (req: ExtendedRequest, res: Response) => {
+  try {
+    const deletedCount: number | undefined = await UnitService.clearUnitsDB();
+
+    if (deletedCount) {
+      return successResponse(res, LOGS.SUCCESS.DB_CLEAR, deletedCount);
+    } else {
+      return successResponse(res, LOGS.SUCCESS.DB_CLEAR_NOTHING, {
+        deletedCount,
+      });
+    }
+  } catch (error) {
+    return errorHandler(res, LOGS.ERROR.DB_CLEAR);
+  }
+};
+
+export {
+  postCreateUnit,
+  postRankUpUnit,
+  getUnitById,
+  getAllUnitsByUser,
+  getAllUnits,
+  postClearUnitsDB,
+};

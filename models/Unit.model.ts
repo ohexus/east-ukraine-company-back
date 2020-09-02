@@ -1,8 +1,13 @@
 import { Schema, model, Types } from 'mongoose';
 
+import { UNITS } from '../constants';
+
+import genUnit from '../helpers/units/genUnit';
+import getNextRank from '../helpers/units/ranks/getNextRank';
+
 import { UnitDoc } from '../interfaces/entities/Unit';
 import { UnitRankKeys } from '../interfaces/units/UnitRank';
-import genUnit from '../helpers/units/genUnit';
+import { UnitXp } from '../interfaces/units/UnitXp';
 
 const unitSchema = new Schema(
   {
@@ -20,8 +25,12 @@ const unitSchema = new Schema(
     salary: { type: Number, required: true },
 
     xp: {
-      current: { type: Number, required: true },
-      promotion: { type: Number, required: true },
+      current: { type: Number, default: 0, required: true },
+      promotion: {
+        type: Number,
+        default: UNITS.XP_PROMOTION.BARQUE,
+        required: true,
+      },
     },
 
     lootingId: { type: String, default: null },
@@ -43,13 +52,44 @@ export default class UnitClass extends UnitModel {
     return createdDoc;
   }
 
+  static async getUnitById(id: string): Promise<UnitDoc | null> {
+    const unitDoc = await this.findOne({ _id: id });
+
+    return unitDoc;
+  }
+
   static async getAllUnitsByUser(userId: string): Promise<UnitDoc[]> {
-    return await this.find({ createdBy: userId });
+    const unitDocs = await this.find({ createdBy: userId });
+
+    return unitDocs;
   }
 
   static async getAllUnits() {
-    const docs = await this.find({});
+    const unitDocs = await this.find({});
 
-    return docs;
+    return unitDocs;
+  }
+
+  static async rankUpUnit(id: string): Promise<UnitDoc | null> {
+    const unitDoc = await this.findOne({ _id: id });
+
+    if (!unitDoc) return null;
+
+    const nextRank: UnitRankKeys = getNextRank(unitDoc.rank);
+
+    const newXp: UnitXp = {
+      current: unitDoc.xp.current,
+      promotion: UNITS.XP_PROMOTION[nextRank],
+    };
+
+    return nextRank !== unitDoc.rank
+      ? await unitDoc.update({ rank: nextRank, xp: newXp }, { new: true })
+      : unitDoc;
+  }
+
+  static async clearUnitsDB(): Promise<number | undefined> {
+    const { deletedCount } = await this.deleteMany({});
+
+    return deletedCount;
   }
 }
