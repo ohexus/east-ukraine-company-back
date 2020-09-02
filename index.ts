@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Application } from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import config from 'config';
@@ -11,8 +11,9 @@ import authMiddleware from './middlewares/auth.middleware';
 import authRouter from './routes/auth.routes';
 import userRouter from './routes/user.routes';
 import unitRouter from './routes/unit.routes';
+import lootingRouter from './routes/looting.routes';
 
-const app: express.Application = express();
+const app: Application = express();
 
 const { PORT } = config.get('SERVER');
 
@@ -42,8 +43,9 @@ app.use('/api/auth', authRouter);
 
 app.use(authMiddleware);
 
-app.use('/api/user/', userRouter);
-app.use('/api/unit/', unitRouter);
+app.use('/api/user', userRouter);
+app.use('/api/unit', unitRouter);
+app.use('/api/looting', lootingRouter);
 
 // start server
 app.listen(process.env.PORT || PORT, () => {
