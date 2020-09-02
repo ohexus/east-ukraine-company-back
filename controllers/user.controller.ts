@@ -6,7 +6,7 @@ import { LOGS } from '../constants';
 import { errorHandler, successResponse } from '../utils';
 import { UserDoc } from '../interfaces/entities/User';
 
-import UsersService from '../services/user.service';
+import { UserService } from '../services';
 
 const getCurrentUser = async (req: ExtendedRequest, res: Response) => {
   if (!req.userId) return errorHandler(res, LOGS.ERROR.UNAUTHORIZED);
@@ -14,7 +14,7 @@ const getCurrentUser = async (req: ExtendedRequest, res: Response) => {
   let user: UserDoc | null;
 
   try {
-    user = await UsersService.getUserById(req.userId);
+    user = await UserService.getUserById(req.userId);
   } catch (error) {
     return errorHandler(res, error.message);
   }
@@ -33,7 +33,7 @@ const getUserById = async (req: Request, res: Response) => {
   let user: UserDoc | null;
 
   try {
-    user = await UsersService.getUserById(id);
+    user = await UserService.getUserById(id);
   } catch (error) {
     return errorHandler(res, error.message);
   }
@@ -45,7 +45,7 @@ const getUserById = async (req: Request, res: Response) => {
 };
 
 const getAllUsers = async (req: Request, res: Response) => {
-  const users = await UsersService.getAllUsers();
+  const users = await UserService.getAllUsers();
   return successResponse(res, LOGS.SUCCESS.DEFAULT, users);
 };
 
