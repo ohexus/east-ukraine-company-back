@@ -12,6 +12,12 @@ class UnitsService {
     return unitDoc;
   }
 
+  async getUnitById(unitId: string): Promise<UnitDoc | null> {
+    const unitDoc = await UnitClass.getUnitById(unitId);
+
+    return unitDoc;
+  }
+
   async getAllUnitsByUser(userId: string): Promise<UnitDoc[]> {
     const unitDocs = await UnitClass.getAllUnitsByUser(userId);
 
@@ -22,6 +28,18 @@ class UnitsService {
     const unitDocs = await UnitClass.getAllUnits();
 
     return unitDocs;
+  }
+
+  async rankUpUnit(unitId: string): Promise<UnitDoc | null> {
+    const unitDoc = await UnitClass.rankUpUnit(unitId);
+
+    return unitDoc;
+  }
+
+  async clearUnitsDB(): Promise<number | undefined> {
+    const deletedCount = await UnitClass.clearUnitsDB();
+
+    return deletedCount;
   }
 }
 
