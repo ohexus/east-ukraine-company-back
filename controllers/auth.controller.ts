@@ -10,7 +10,7 @@ import {
   comparePasswords,
 } from '../utils';
 
-import UsersService from '../services/user.service';
+import { UserService } from '../services';
 
 import { UserSignUpRequest } from '../interfaces/requests/UserRequests';
 import { UserDoc } from '../interfaces/entities/User';
@@ -25,7 +25,7 @@ const postSignUp = async (req: Request, res: Response) => {
   try {
     const hashedPass = await hashPassword(password);
 
-    await UsersService.createUser({
+    await UserService.createUser({
       email,
       username,
       password: hashedPass,
@@ -42,7 +42,7 @@ const postLogin = async (req: Request, res: Response) => {
   let user: UserDoc | null;
 
   try {
-    user = await UsersService.getUser({ login, password });
+    user = await UserService.getUser({ login, password });
   } catch (error) {
     return errorHandler(res, error.message);
   }

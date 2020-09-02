@@ -4,13 +4,13 @@ import ExtendedRequest from '../interfaces/requests/ExtendedRequest';
 import { LOGS } from '../constants';
 
 import { errorHandler, successResponse } from '../utils';
-import UnitsService from '../services/unit.service';
+import { UnitService } from '../services';
 
 const postCreateUnit = async (req: ExtendedRequest, res: Response) => {
   if (!req.userId) return errorHandler(res, LOGS.ERROR.UNAUTHORIZED);
 
   try {
-    const unit = await UnitsService.createUnit(req.body.rank, req.userId);
+    const unit = await UnitService.createUnit(req.body.rank, req.userId);
 
     return successResponse(res, LOGS.SUCCESS.UNIT_CREATE, unit);
   } catch {
@@ -22,7 +22,7 @@ const getAllUnitsByUser = async (req: ExtendedRequest, res: Response) => {
   if (!req.userId) return errorHandler(res, LOGS.ERROR.UNAUTHORIZED);
 
   try {
-    const units = await UnitsService.getAllUnitsByUser(req.userId);
+    const units = await UnitService.getAllUnitsByUser(req.userId);
 
     return successResponse(res, LOGS.SUCCESS.DEFAULT, units);
   } catch (error) {
@@ -32,7 +32,7 @@ const getAllUnitsByUser = async (req: ExtendedRequest, res: Response) => {
 
 const getAllUnits = async (req: Request, res: Response) => {
   try {
-    const users = await UnitsService.getAllUnits();
+    const users = await UnitService.getAllUnits();
 
     return successResponse(res, LOGS.SUCCESS.DEFAULT, users);
   } catch (error) {

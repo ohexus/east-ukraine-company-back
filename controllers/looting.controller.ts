@@ -6,7 +6,7 @@ import { LOGS } from '../constants';
 import { errorHandler, successResponse } from '../utils';
 import { LootingCreateRequest } from '../interfaces/requests/LootingRequests';
 
-import LootingsService from '../services/looting.service';
+import { LootingService } from '../services';
 
 const postCreateLooting = async (req: ExtendedRequest, res: Response) => {
   if (!req.userId) return errorHandler(res, LOGS.ERROR.UNAUTHORIZED);
@@ -14,7 +14,7 @@ const postCreateLooting = async (req: ExtendedRequest, res: Response) => {
   const { title, description, xpGain } = req.body;
 
   try {
-    const looting = await LootingsService.createLooting({
+    const looting = await LootingService.createLooting({
       title,
       description,
       xpGain,
@@ -28,7 +28,7 @@ const postCreateLooting = async (req: ExtendedRequest, res: Response) => {
 
 const getAllLootings = async (req: Request, res: Response) => {
   try {
-    const users = await LootingsService.getAllLootings();
+    const users = await LootingService.getAllLootings();
 
     return successResponse(res, LOGS.SUCCESS.DEFAULT, users);
   } catch (error) {
@@ -42,7 +42,7 @@ const getLootingById = async (req: ExtendedRequest, res: Response) => {
   const { id } = req.params;
 
   try {
-    const looting = await LootingsService.getLootingById(id);
+    const looting = await LootingService.getLootingById(id);
 
     return successResponse(res, LOGS.SUCCESS.DEFAULT, looting);
   } catch (error) {
@@ -54,7 +54,7 @@ const getRandomLooting = async (req: ExtendedRequest, res: Response) => {
   if (!req.userId) return errorHandler(res, LOGS.ERROR.UNAUTHORIZED);
 
   try {
-    const looting = await LootingsService.getRandomLooting();
+    const looting = await LootingService.getRandomLooting();
 
     return successResponse(res, LOGS.SUCCESS.DEFAULT, looting);
   } catch (error) {
