@@ -31,9 +31,13 @@ const getAllUnitsByUser = async (req: ExtendedRequest, res: Response) => {
 };
 
 const getAllUnits = async (req: Request, res: Response) => {
-  const users = await UnitsService.getAllUnits();
+  try {
+    const users = await UnitsService.getAllUnits();
 
-  return successResponse(res, LOGS.SUCCESS.LOGIN, users);
+    return successResponse(res, LOGS.SUCCESS.DEFAULT, users);
+  } catch (error) {
+    return errorHandler(res, LOGS.ERROR.GET_UNITS);
+  }
 };
 
 export { postCreateUnit, getAllUnitsByUser, getAllUnits };
