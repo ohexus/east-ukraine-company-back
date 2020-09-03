@@ -2,11 +2,12 @@ import { Response, Router } from 'express';
 import ExtendedRequest from '../interfaces/requests/ExtendedRequest';
 import {
   postCreateUnit,
-  postRankUpUnit,
+  postPromoteUnitById,
   getUnitById,
-  getAllUnitsByUser,
+  getAllUserUnits,
   getAllUnits,
-  postClearUnitsDB,
+  deleteUnitById,
+  deleteUnitsDB,
 } from '../controllers/unit.controller';
 
 const router = Router();
@@ -14,12 +15,12 @@ const router = Router();
 router.post('/create', (req: ExtendedRequest, res: Response) =>
   postCreateUnit(req, res),
 );
-router.post('/rankUp', (req: ExtendedRequest, res: Response) =>
-  postRankUpUnit(req, res),
+router.post('/promote/:id', (req: ExtendedRequest, res: Response) =>
+  postPromoteUnitById(req, res),
 );
 
 router.get('/all', (req: ExtendedRequest, res: Response) =>
-  getAllUnitsByUser(req, res),
+  getAllUserUnits(req, res),
 );
 router.get('/all-dev', (req: ExtendedRequest, res: Response) =>
   getAllUnits(req, res),
@@ -28,8 +29,11 @@ router.get('/:id', (req: ExtendedRequest, res: Response) =>
   getUnitById(req, res),
 );
 
-router.post('/clearUnitsDB', (req: ExtendedRequest, res: Response) =>
-  postClearUnitsDB(req, res),
+router.delete('/clearUnitsDB', (req: ExtendedRequest, res: Response) =>
+  deleteUnitsDB(req, res),
+);
+router.delete('/:id', (req: ExtendedRequest, res: Response) =>
+  deleteUnitById(req, res),
 );
 
 const unitRouter = router;

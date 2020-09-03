@@ -26,7 +26,13 @@ const logger = log4js.getLogger();
 
 logger.level = config.get('LOGGER_LVL');
 
-app.use(cors());
+app.use(
+  cors({
+    origin: isProduction
+      ? 'https://east-ukraine-company.herokuapp.com'
+      : config.get('ORIGIN_URI'),
+  }),
+);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(__dirname + '/public'));
