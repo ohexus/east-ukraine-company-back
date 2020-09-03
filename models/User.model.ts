@@ -6,20 +6,6 @@ import {
   UserLogInRequest,
 } from '../interfaces/requests/UserRequests';
 
-// logs: [
-//   {
-//     message: String,
-//     time: { type: Date, default: Date.now() },
-//   },
-// ],
-
-// $push: {
-//   logs: {
-//     message: 'User created',
-//     time: Date.now(),
-//   },
-// },
-
 const userSchema: Schema = new Schema(
   {
     email: { type: String, unique: true, required: true },

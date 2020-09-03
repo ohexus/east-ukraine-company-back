@@ -19,19 +19,30 @@ const postSignUp = async (req: Request, res: Response) => {
   const { email, username, password }: UserSignUpRequest = req.body;
 
   if (!email || !username || !password) {
-    return errorHandler(res, LOGS.ERROR.REGISTER);
+    return errorHandler(res, LOGS.ERROR.SIGNUP);
   }
 
   try {
     const hashedPass = await hashPassword(password);
 
-    await UserService.createUser({
-      email,
-      username,
-      password: hashedPass,
-    });
+    let user: UserDoc | null;
 
-    return successResponse(res, LOGS.SUCCESS.REGISTER);
+    try {
+      user = await UserService.createUser({
+        email,
+        username,
+        password: hashedPass,
+      });
+    } catch (error) {
+      return errorHandler(res, error.message);
+    }
+    if (!user) {
+      return errorHandler(res, LOGS.ERROR.SIGNUP);
+    }
+
+    return successResponse(res, LOGS.SUCCESS.SIGNUP, {
+      jwt_token: createToken(user._id),
+    });
   } catch (error) {
     return errorHandler(res, error.message);
   }
