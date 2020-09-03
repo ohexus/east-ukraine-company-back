@@ -52,25 +52,7 @@ export default class UnitClass extends UnitModel {
     return createdDoc;
   }
 
-  static async getUnitById(id: string): Promise<UnitDoc | null> {
-    const unitDoc = await this.findOne({ _id: id });
-
-    return unitDoc;
-  }
-
-  static async getAllUnitsByUser(userId: string): Promise<UnitDoc[]> {
-    const unitDocs = await this.find({ createdBy: userId });
-
-    return unitDocs;
-  }
-
-  static async getAllUnits() {
-    const unitDocs = await this.find({});
-
-    return unitDocs;
-  }
-
-  static async promoteUnit(id: string): Promise<UnitDoc | null> {
+  static async promoteUnitById(id: string): Promise<UnitDoc | null> {
     const unitDoc = await this.findOne({ _id: id });
 
     if (!unitDoc) return null;
@@ -87,7 +69,31 @@ export default class UnitClass extends UnitModel {
       : unitDoc;
   }
 
-  static async clearUnitsDB(): Promise<number | undefined> {
+  static async getUnitById(unitId: string): Promise<UnitDoc | null> {
+    const unitDoc = await this.findOne({ _id: unitId });
+
+    return unitDoc;
+  }
+
+  static async getAllUserUnits(userId: string): Promise<UnitDoc[]> {
+    const unitDocs = await this.find({ createdBy: userId });
+
+    return unitDocs;
+  }
+
+  static async getAllUnits() {
+    const unitDocs = await this.find({});
+
+    return unitDocs;
+  }
+
+  static async deleteUnitById(unitId: string): Promise<UnitDoc | null> {
+    const deletedUnit = await this.findByIdAndDelete(unitId);
+
+    return deletedUnit;
+  }
+
+  static async deleteUnitsDB(): Promise<number | undefined> {
     const { deletedCount } = await this.deleteMany({});
 
     return deletedCount;

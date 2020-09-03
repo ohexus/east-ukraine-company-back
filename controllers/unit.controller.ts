@@ -18,19 +18,19 @@ const postCreateUnit = async (req: ExtendedRequest, res: Response) => {
   }
 };
 
-const postPromoteUnit = async (req: ExtendedRequest, res: Response) => {
-  const { unitId } = req.body;
+const postPromoteUnitById = async (req: ExtendedRequest, res: Response) => {
+  const { id } = req.params;
 
-  if (!unitId) return errorHandler(res, LOGS.ERROR.DEFAULT);
+  if (!id) return errorHandler(res, LOGS.ERROR.UNIT_NOT_EXIST);
 
   try {
-    const unit = await UnitService.getUnitById(unitId);
+    const unit = await UnitService.getUnitById(id);
 
     if (!validateUnitPromotion(unit)) {
       return errorHandler(res, LOGS.ERROR.UNIT_PROMOTE_UNABLE);
     }
 
-    const updatedUnit = await UnitService.promoteUnit(unitId);
+    const updatedUnit = await UnitService.promoteUnitById(id);
 
     return successResponse(res, LOGS.SUCCESS.UNIT_PROMOTE, updatedUnit);
   } catch (error) {
@@ -41,7 +41,7 @@ const postPromoteUnit = async (req: ExtendedRequest, res: Response) => {
 const getUnitById = async (req: ExtendedRequest, res: Response) => {
   const { id } = req.params;
 
-  if (!id) return errorHandler(res, LOGS.ERROR.DEFAULT);
+  if (!id) return errorHandler(res, LOGS.ERROR.UNIT_NOT_EXIST);
 
   try {
     const unit = await UnitService.getUnitById(id as string);
@@ -54,11 +54,11 @@ const getUnitById = async (req: ExtendedRequest, res: Response) => {
   }
 };
 
-const getAllUnitsByUser = async (req: ExtendedRequest, res: Response) => {
+const getAllUserUnits = async (req: ExtendedRequest, res: Response) => {
   if (!req.userId) return errorHandler(res, LOGS.ERROR.UNAUTHORIZED);
 
   try {
-    const units = await UnitService.getAllUnitsByUser(req.userId);
+    const units = await UnitService.getAllUserUnits(req.userId);
 
     return successResponse(res, LOGS.SUCCESS.DEFAULT, units);
   } catch (error) {
@@ -76,9 +76,23 @@ const getAllUnits = async (req: ExtendedRequest, res: Response) => {
   }
 };
 
-const postClearUnitsDB = async (req: ExtendedRequest, res: Response) => {
+const deleteUnitById = async (req: ExtendedRequest, res: Response) => {
+  const { id } = req.params;
+
+  if (!id) return errorHandler(res, LOGS.ERROR.UNIT_NOT_EXIST);
+
   try {
-    const deletedCount: number | undefined = await UnitService.clearUnitsDB();
+    const deletedUnit = await UnitService.deleteUnitById(id);
+
+    return successResponse(res, LOGS.SUCCESS.UNIT_PROMOTE, deletedUnit);
+  } catch (error) {
+    return errorHandler(res, LOGS.ERROR.UNIT_PROMOTE);
+  }
+};
+
+const deleteUnitsDB = async (req: ExtendedRequest, res: Response) => {
+  try {
+    const deletedCount: number | undefined = await UnitService.deleteUnitsDB();
 
     if (deletedCount) {
       return successResponse(res, LOGS.SUCCESS.DB_CLEAR, deletedCount);
@@ -94,9 +108,10 @@ const postClearUnitsDB = async (req: ExtendedRequest, res: Response) => {
 
 export {
   postCreateUnit,
-  postPromoteUnit,
+  postPromoteUnitById,
   getUnitById,
-  getAllUnitsByUser,
+  getAllUserUnits,
   getAllUnits,
-  postClearUnitsDB,
+  deleteUnitById,
+  deleteUnitsDB,
 };

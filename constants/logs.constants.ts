@@ -5,7 +5,7 @@ const LOGS = {
   SUCCESS: {
     DEFAULT: 'Request completed successfuly',
     LOGIN: 'Login completed successfully',
-    REGISTER: 'User registered successfully',
+    SIGNUP: 'User signed up successfully',
     DB_CONNECTION: 'DB connection successfully established!',
     DB_CLEAR: 'DB successfully cleared!',
     DB_CLEAR_NOTHING: 'Nothing to clear',
@@ -19,7 +19,7 @@ const LOGS = {
     DEFAULT: 'Request failed!',
     LOGIN: "Login failed. User doesn't exist!",
     USER_SAVE: 'Failed to add user to DB!',
-    REGISTER: 'Registration failed!',
+    SIGNUP: 'Sign up failed!',
     JWT_EXPIRED: 'JWT token expired!',
     PASS_COMPARING: 'Password do not match',
     DB_CONNECTION: 'Failed DB connection!',
