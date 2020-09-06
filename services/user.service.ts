@@ -31,6 +31,12 @@ class UsersService {
     return userDoc;
   }
 
+  async deleteUserById(id: string): Promise<UserDoc | null> {
+    const userDoc = await UserClass.deleteUserById(id);
+
+    return userDoc;
+  }
+
   // async updateAvatar()
 
   // async getAllSkills() {

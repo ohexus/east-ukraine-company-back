@@ -3,7 +3,7 @@ import config from 'config';
 import { Response, NextFunction } from 'express';
 
 import { LOGS } from '../constants';
-import { errorHandler } from '../utils';
+import { errorHandler, successResponse } from '../utils';
 
 import userService from '../services/user.service';
 import ExtendedRequest from '../interfaces/requests/ExtendedRequest';
@@ -18,9 +18,20 @@ export default async function authMiddleware(
 
     if (!jwt_token) return errorHandler(res, LOGS.ERROR.UNAUTHORIZED);
 
-    const { userId } = jwt.verify(jwt_token, config.get('JWT_SECRET')) as {
-      userId: string;
-    };
+    let userId: string;
+
+    try {
+      const decriptedToken = jwt.verify(
+        jwt_token,
+        config.get('JWT_SECRET'),
+      ) as {
+        userId: string;
+      };
+
+      userId = decriptedToken.userId;
+    } catch {
+      return errorHandler(res, LOGS.ERROR.JWT_EXPIRED);
+    }
 
     const foundUser = await userService.getUserById(userId);
 

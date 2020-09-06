@@ -1,4 +1,4 @@
 export default interface AvatarBuffer {
-  data: Buffer;
+  buffer: Buffer;
   contentType: string;
 }

@@ -26,7 +26,7 @@ const getCurrentUser = async (req: ExtendedRequest, res: Response) => {
 };
 
 const getUserById = async (req: Request, res: Response) => {
-  const id = req.query.id?.toString();
+  const { id } = req.params;
 
   if (!id) return errorHandler(res, LOGS.ERROR.USER_NOT_EXIST);
 
@@ -47,6 +47,25 @@ const getUserById = async (req: Request, res: Response) => {
 const getAllUsers = async (req: Request, res: Response) => {
   const users = await UserService.getAllUsers();
   return successResponse(res, LOGS.SUCCESS.DEFAULT, users);
+};
+
+const deleteUserById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  if (!id) return errorHandler(res, LOGS.ERROR.USER_NOT_EXIST);
+
+  let user: UserDoc | null;
+
+  try {
+    user = await UserService.deleteUserById(id);
+  } catch (error) {
+    return errorHandler(res, error.message);
+  }
+  if (!user) {
+    return errorHandler(res, LOGS.ERROR.USER_NOT_EXIST);
+  }
+
+  return successResponse(res, LOGS.SUCCESS.DEFAULT, user);
 };
 
 // const patchUpdateAvatar = async (req, res) => {
@@ -86,5 +105,6 @@ export {
   getCurrentUser,
   getUserById,
   getAllUsers,
+  deleteUserById,
   // patchUpdateAvatar,
 };

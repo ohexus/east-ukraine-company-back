@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, Types } from 'mongoose';
 
 import { UserDoc } from '../interfaces/entities/User';
 import {
@@ -11,6 +11,11 @@ const userSchema: Schema = new Schema(
     email: { type: String, unique: true, required: true },
     username: { type: String, unique: true, required: true },
     password: { type: String, required: true },
+
+    lootings: {
+      type: [{ type: Types.ObjectId, ref: 'Looting' }],
+      default: [],
+    },
   },
   { timestamps: true },
 );
@@ -44,10 +49,6 @@ export default class UserClass extends UserModel {
     try {
       const { login, password } = user;
 
-      const all = await this.find({});
-
-      console.log(all);
-
       if (!login || !password) return null;
 
       const foundDoc: UserDoc | null = await this.findOne({
@@ -65,6 +66,18 @@ export default class UserClass extends UserModel {
       if (!id) return null;
 
       const foundDoc: UserDoc | null = await this.findOne({ _id: id });
+
+      return foundDoc;
+    } catch {
+      return null;
+    }
+  }
+
+  static async deleteUserById(id: string): Promise<UserDoc | null> {
+    try {
+      if (!id) return null;
+
+      const foundDoc: UserDoc | null = await this.findOneAndDelete({ _id: id });
 
       return foundDoc;
     } catch {
