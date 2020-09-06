@@ -11,7 +11,7 @@ import authMiddleware from './middlewares/auth.middleware';
 import authRouter from './routes/auth.routes';
 import userRouter from './routes/user.routes';
 import unitRouter from './routes/unit.routes';
-import lootingRouter from './routes/looting.routes';
+import lootingRouter from './routes/lootings';
 
 const app: Application = express();
 

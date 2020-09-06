@@ -3,14 +3,12 @@ import { UNITS } from '../../constants';
 import genGender from './genGender';
 import genName from './genName';
 import genAvatar from './genAvatar';
+import getPrevRankSalary from './ranks/getPrevRankSalary';
 
-import { UnitRankKeys } from '../../interfaces/units/UnitRank';
 import Genders from '../../interfaces/Genders';
 import AvatarBuffer from '../../interfaces/AvatarBuffer';
 import { Unit } from '../../interfaces/entities/Unit';
-import XP_PROMOTION from '../../constants/units/XP_PROMOTION';
-import getNextRank from './ranks/getNextRank';
-import getPrevRankSalary from './ranks/getPrevRankSalary';
+import { UnitRankKeys } from '../../interfaces/units/UnitRank';
 import { UnitXp } from '../../interfaces/units/UnitXp';
 
 export default function genUnit(
@@ -27,7 +25,7 @@ export default function genUnit(
 
   const xp: UnitXp = {
     current: getPrevRankSalary(unitRank),
-    promotion: XP_PROMOTION[unitRank],
+    promotion: UNITS.XP_PROMOTION[unitRank],
   };
 
   return {

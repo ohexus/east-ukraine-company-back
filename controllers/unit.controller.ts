@@ -48,7 +48,7 @@ const getUnitById = async (req: ExtendedRequest, res: Response) => {
 
     if (!unit) return errorHandler(res, LOGS.ERROR.UNIT_NOT_EXIST);
 
-    return successResponse(res, LOGS.SUCCESS.DEFAULT, unit);
+    return successResponse(res, LOGS.SUCCESS.GET_UNIT, unit);
   } catch (error) {
     return errorHandler(res, error.message);
   }
@@ -60,7 +60,7 @@ const getAllUserUnits = async (req: ExtendedRequest, res: Response) => {
   try {
     const units = await UnitService.getAllUserUnits(req.userId);
 
-    return successResponse(res, LOGS.SUCCESS.DEFAULT, units);
+    return successResponse(res, LOGS.SUCCESS.GET_UNITS, units);
   } catch (error) {
     return errorHandler(res, LOGS.ERROR.GET_UNITS);
   }
@@ -70,7 +70,7 @@ const getAllUnits = async (req: ExtendedRequest, res: Response) => {
   try {
     const units = await UnitService.getAllUnits();
 
-    return successResponse(res, LOGS.SUCCESS.DEFAULT, units);
+    return successResponse(res, LOGS.SUCCESS.GET_UNITS, units);
   } catch (error) {
     return errorHandler(res, LOGS.ERROR.GET_UNITS);
   }
@@ -84,9 +84,9 @@ const deleteUnitById = async (req: ExtendedRequest, res: Response) => {
   try {
     const deletedUnit = await UnitService.deleteUnitById(id);
 
-    return successResponse(res, LOGS.SUCCESS.UNIT_PROMOTE, deletedUnit);
+    return successResponse(res, LOGS.SUCCESS.UNIT_DELETE, deletedUnit);
   } catch (error) {
-    return errorHandler(res, LOGS.ERROR.UNIT_PROMOTE);
+    return errorHandler(res, LOGS.ERROR.UNIT_DELETE);
   }
 };
 

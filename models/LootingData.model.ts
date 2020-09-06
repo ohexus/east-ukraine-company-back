@@ -1,24 +1,26 @@
-import { Schema, model, Model } from 'mongoose';
+import { Schema, model } from 'mongoose';
 
 import getRandomInt from '../helpers/getRandomInt';
 
-import { LootingCreateRequest } from '../interfaces/requests/LootingRequests';
-import { LootingDoc } from '../interfaces/entities/Looting';
+import { LootingDataCreateRequest } from '../interfaces/requests/LootingRequests';
+import { LootingDataDoc } from '../interfaces/entities/Looting';
 
-const lootingSchema: Schema = new Schema({
+const lootingDataSchema: Schema = new Schema({
   title: { type: String, required: true, unique: true },
-
   description: { type: String, required: true },
 
   xpGain: { type: Number, default: 500 },
 });
 
-const LootingModel = model<LootingDoc>('Looting', lootingSchema);
+const LootingDataModel = model<LootingDataDoc>(
+  'LootingData',
+  lootingDataSchema,
+);
 
-class LootingClass extends LootingModel {
+class LootingDataClass extends LootingDataModel {
   static async createLooting(
-    looting: LootingCreateRequest,
-  ): Promise<LootingDoc | null> {
+    looting: LootingDataCreateRequest,
+  ): Promise<LootingDataDoc | null> {
     try {
       const { title, description, xpGain } = looting;
 
@@ -36,7 +38,7 @@ class LootingClass extends LootingModel {
     }
   }
 
-  static async getAllLootings(): Promise<LootingDoc[]> {
+  static async getAllLootings(): Promise<LootingDataDoc[]> {
     try {
       const foundDocs = await this.find({});
 
@@ -46,7 +48,7 @@ class LootingClass extends LootingModel {
     }
   }
 
-  static async getLootingById(id: string): Promise<LootingDoc | null> {
+  static async getLootingById(id: string): Promise<LootingDataDoc | null> {
     try {
       if (!id) return null;
 
@@ -60,7 +62,7 @@ class LootingClass extends LootingModel {
     }
   }
 
-  static async getRandomLooting(): Promise<LootingDoc | null> {
+  static async getRandomLooting(): Promise<LootingDataDoc | null> {
     try {
       const foundDocs = await this.find({});
 
@@ -75,4 +77,4 @@ class LootingClass extends LootingModel {
   }
 }
 
-export default LootingClass;
+export default LootingDataClass;
