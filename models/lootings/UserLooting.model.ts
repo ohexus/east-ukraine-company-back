@@ -1,7 +1,6 @@
 import { Schema, model, Types } from 'mongoose';
 
-import { addLootingToUserRequest } from '../interfaces/requests/LootingRequests';
-import { UserLootingDoc, Looting } from '../interfaces/entities/Looting';
+import { UserLootingDoc, Looting } from '../../interfaces/entities/Looting';
 
 const userLootingSchema: Schema = new Schema<UserLootingDoc>({
   createdBy: { type: Types.ObjectId, ref: 'User', required: true },
@@ -11,10 +10,15 @@ const userLootingSchema: Schema = new Schema<UserLootingDoc>({
 
   xpGain: { type: Number, default: 500 },
 
+  isStarted: { type: Boolean, default: false },
+
   units: { type: [String], default: [] },
 });
 
-const UserLootingModel = model<UserLootingDoc>('Looting', userLootingSchema);
+const UserLootingModel = model<UserLootingDoc>(
+  'UserLooting',
+  userLootingSchema,
+);
 
 class UserLootingClass extends UserLootingModel {
   static async createUserLooting(
@@ -30,6 +34,7 @@ class UserLootingClass extends UserLootingModel {
         title,
         description,
         xpGain,
+        isStarted: true,
         units: unitIds,
       });
 
@@ -39,9 +44,38 @@ class UserLootingClass extends UserLootingModel {
     }
   }
 
+  static async finishUserLooting(
+    lootingId: string,
+  ): Promise<UserLootingDoc | null> {
+    try {
+      const foundDoc = await this.findByIdAndUpdate(lootingId, {
+        isStarted: false,
+      });
+
+      return foundDoc;
+    } catch {
+      return null;
+    }
+  }
+
   static async getAllUserLootings(userId: string): Promise<UserLootingDoc[]> {
     try {
       const foundDocs = await this.find({ createdBy: userId });
+
+      return foundDocs;
+    } catch {
+      return [];
+    }
+  }
+
+  static async getAllStartedUserLootings(
+    userId: string,
+  ): Promise<UserLootingDoc[]> {
+    try {
+      const foundDocs = await this.find({
+        createdBy: userId,
+        isStarted: true,
+      });
 
       return foundDocs;
     } catch {

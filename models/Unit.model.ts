@@ -30,7 +30,11 @@ const unitSchema = new Schema(
       },
     },
 
-    lootingId: { type: String, default: null },
+    lootingId: {
+      type: Types.ObjectId || null,
+      ref: 'UserLooting',
+      default: null,
+    },
   },
   { timestamps: true },
 );
@@ -64,6 +68,36 @@ export default class UnitClass extends UnitModel {
     return nextRank !== unitDoc.rank
       ? await unitDoc.update({ rank: nextRank, xp: newXp }, { new: true })
       : unitDoc;
+  }
+
+  static async assignLootingToUnits(
+    lootingId: string,
+    unitIds: string[],
+  ): Promise<UnitDoc[]> {
+    const unitDocs = (await this.updateMany(
+      { _id: { $in: unitIds } },
+      { lootingId },
+    )) as UnitDoc[];
+
+    return unitDocs;
+  }
+
+  static async finishLootingForUnits(
+    unitIds: string[],
+    xpGain: number,
+  ): Promise<UnitDoc[]> {
+    const unitDocs = await this.find({ _id: { $in: unitIds } }).then((docs) =>
+      docs.map((doc) => {
+        doc.lootingId = null;
+        doc.xp.current += xpGain;
+
+        return doc;
+      }),
+    );
+
+    unitDocs.forEach(async (doc) => await doc.save());
+
+    return unitDocs;
   }
 
   static async getUnitById(unitId: string): Promise<UnitDoc | null> {

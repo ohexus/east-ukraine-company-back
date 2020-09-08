@@ -1,9 +1,9 @@
 import { Schema, model } from 'mongoose';
 
-import getRandomInt from '../helpers/getRandomInt';
+import getRandomInt from '../../helpers/getRandomInt';
 
-import { LootingDataCreateRequest } from '../interfaces/requests/LootingRequests';
-import { LootingDataDoc } from '../interfaces/entities/Looting';
+import { LootingDataCreateRequest } from '../../interfaces/requests/LootingRequests';
+import { LootingDataDoc } from '../../interfaces/entities/Looting';
 
 const lootingDataSchema: Schema = new Schema({
   title: { type: String, required: true, unique: true },
