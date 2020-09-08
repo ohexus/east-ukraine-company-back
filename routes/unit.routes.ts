@@ -3,6 +3,8 @@ import ExtendedRequest from '../interfaces/requests/ExtendedRequest';
 import {
   postCreateUnit,
   postPromoteUnitById,
+  postAssignLootingToUnits,
+  postFinishLootingForUnits,
   getUnitById,
   getAllUserUnits,
   getAllUnits,
@@ -14,6 +16,12 @@ const router = Router();
 
 router.post('/create', (req: ExtendedRequest, res: Response) =>
   postCreateUnit(req, res),
+);
+router.post('/assign-looting', (req: ExtendedRequest, res: Response) =>
+  postAssignLootingToUnits(req, res),
+);
+router.post('/finish-looting', (req: ExtendedRequest, res: Response) =>
+  postFinishLootingForUnits(req, res),
 );
 router.post('/promote/:id', (req: ExtendedRequest, res: Response) =>
   postPromoteUnitById(req, res),

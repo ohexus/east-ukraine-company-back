@@ -16,11 +16,11 @@ router.post('/create', (req: ExtendedRequest, res: Response) =>
 router.get('/all', (req: ExtendedRequest, res: Response) =>
   getAllLootingData(req, res),
 );
-router.get('/:id', (req: ExtendedRequest, res: Response) =>
-  getLootingDataById(req, res),
-);
 router.get('/random', (req: ExtendedRequest, res: Response) =>
   getRandomLootingData(req, res),
+);
+router.get('/:id', (req: ExtendedRequest, res: Response) =>
+  getLootingDataById(req, res),
 );
 
 const lootingDataRouter = router;

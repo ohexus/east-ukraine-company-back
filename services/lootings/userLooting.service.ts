@@ -3,7 +3,7 @@ import { UserLootingClass } from '../../models';
 import { UserLootingDoc, Looting } from '../../interfaces/entities/Looting';
 
 class UserLootingsService {
-  async createLooting(
+  async createUserLooting(
     looting: Looting,
     userId: string,
     unitIds: string[],
@@ -17,8 +17,22 @@ class UserLootingsService {
     return UserLootingDoc;
   }
 
+  async finishUserLooting(lootingId: string): Promise<UserLootingDoc | null> {
+    const UserLootingDoc = await UserLootingClass.finishUserLooting(lootingId);
+
+    return UserLootingDoc;
+  }
+
   async getAllUserLootings(userId: string): Promise<UserLootingDoc[]> {
     const UserLootingDocs = await UserLootingClass.getAllUserLootings(userId);
+
+    return UserLootingDocs;
+  }
+
+  async getAllStartedUserLootings(userId: string): Promise<UserLootingDoc[]> {
+    const UserLootingDocs = await UserLootingClass.getAllStartedUserLootings(
+      userId,
+    );
 
     return UserLootingDocs;
   }

@@ -10,6 +10,8 @@ export interface Looting {
 export interface UserLootingDoc extends Looting, Document {
   createdBy: string;
 
+  isStarted: boolean;
+
   units: string[];
 }
 

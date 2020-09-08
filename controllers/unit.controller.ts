@@ -4,7 +4,7 @@ import ExtendedRequest from '../interfaces/requests/ExtendedRequest';
 import { LOGS } from '../constants';
 
 import { errorHandler, successResponse, validateUnitPromotion } from '../utils';
-import { UnitService } from '../services';
+import { UnitService, UserLootingsService } from '../services';
 
 const postCreateUnit = async (req: ExtendedRequest, res: Response) => {
   if (!req.userId) return errorHandler(res, LOGS.ERROR.UNAUTHORIZED);
@@ -21,7 +21,7 @@ const postCreateUnit = async (req: ExtendedRequest, res: Response) => {
 const postPromoteUnitById = async (req: ExtendedRequest, res: Response) => {
   const { id } = req.params;
 
-  if (!id) return errorHandler(res, LOGS.ERROR.UNIT_NOT_EXIST);
+  if (!id) return errorHandler(res, LOGS.ERROR.INVALID_REQUEST);
 
   try {
     const unit = await UnitService.getUnitById(id);
@@ -38,10 +38,50 @@ const postPromoteUnitById = async (req: ExtendedRequest, res: Response) => {
   }
 };
 
+const postAssignLootingToUnits = async (
+  req: ExtendedRequest,
+  res: Response,
+) => {
+  const { lootingId, unitIds } = req.body;
+
+  try {
+    const units = await UnitService.assignLootingToUnits(lootingId, unitIds);
+
+    return successResponse(res, LOGS.SUCCESS.LOOTING_ASSIGN, units);
+  } catch (error) {
+    return errorHandler(res, LOGS.ERROR.LOOTING_ASSIGN);
+  }
+};
+
+const postFinishLootingForUnits = async (
+  req: ExtendedRequest,
+  res: Response,
+) => {
+  const { lootingId, unitIds } = req.body;
+
+  if (!lootingId || !unitIds) {
+    return errorHandler(res, LOGS.ERROR.INVALID_REQUEST);
+  }
+
+  let xpGain = await UserLootingsService.getLootingById(lootingId).then(
+    (doc) => doc?.xpGain,
+  );
+
+  if (!xpGain) return errorHandler(res, LOGS.ERROR.LOOTING_NOT_EXIST);
+
+  try {
+    const units = await UnitService.finishLootingForUnits(unitIds, xpGain);
+
+    return successResponse(res, LOGS.SUCCESS.UNITS_FINISHED_LOOTING, units);
+  } catch (error) {
+    return errorHandler(res, LOGS.ERROR.UNITS_FINISHED_LOOTING);
+  }
+};
+
 const getUnitById = async (req: ExtendedRequest, res: Response) => {
   const { id } = req.params;
 
-  if (!id) return errorHandler(res, LOGS.ERROR.UNIT_NOT_EXIST);
+  if (!id) return errorHandler(res, LOGS.ERROR.INVALID_REQUEST);
 
   try {
     const unit = await UnitService.getUnitById(id as string);
@@ -79,7 +119,7 @@ const getAllUnits = async (req: ExtendedRequest, res: Response) => {
 const deleteUnitById = async (req: ExtendedRequest, res: Response) => {
   const { id } = req.params;
 
-  if (!id) return errorHandler(res, LOGS.ERROR.UNIT_NOT_EXIST);
+  if (!id) return errorHandler(res, LOGS.ERROR.INVALID_REQUEST);
 
   try {
     const deletedUnit = await UnitService.deleteUnitById(id);
@@ -109,6 +149,8 @@ const deleteUnitsDB = async (req: ExtendedRequest, res: Response) => {
 export {
   postCreateUnit,
   postPromoteUnitById,
+  postAssignLootingToUnits,
+  postFinishLootingForUnits,
   getUnitById,
   getAllUserUnits,
   getAllUnits,
