@@ -18,6 +18,24 @@ class UnitsService {
     return unitDoc;
   }
 
+  async assignLootingToUnits(
+    lootingId: string,
+    unitIds: string[],
+  ): Promise<UnitDoc[]> {
+    const unitDocs = await UnitClass.assignLootingToUnits(lootingId, unitIds);
+
+    return unitDocs;
+  }
+
+  async finishLootingForUnits(
+    unitIds: string[],
+    xpGain: number,
+  ): Promise<UnitDoc[]> {
+    const unitDocs = await UnitClass.finishLootingForUnits(unitIds, xpGain);
+
+    return unitDocs;
+  }
+
   async getUnitById(unitId: string): Promise<UnitDoc | null> {
     const unitDoc = await UnitClass.getUnitById(unitId);
 
