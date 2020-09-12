@@ -5,14 +5,14 @@ import { UserLootingDoc, Looting } from '../../interfaces/entities/Looting';
 const userLootingSchema: Schema = new Schema<UserLootingDoc>({
   createdBy: { type: Types.ObjectId, ref: 'User', required: true },
 
-  title: { type: String, required: true, unique: true },
-  description: { type: String, required: true },
+  title: { type: String, required: true },
+  description: { type: String, required: true},
 
   xpGain: { type: Number, default: 500 },
 
   isStarted: { type: Boolean, default: false },
 
-  units: { type: [String], default: [] },
+  units: { type: [{ type: Types.ObjectId, ref: 'Unit' }], default: [] },
 });
 
 const UserLootingModel = model<UserLootingDoc>(
@@ -25,7 +25,7 @@ class UserLootingClass extends UserLootingModel {
     looting: Looting,
     userId: string,
     unitIds: string[],
-  ): Promise<UserLootingDoc | null> {
+  ): Promise<UserLootingDoc> {
     const { title, description, xpGain } = looting;
 
     try {
@@ -39,8 +39,8 @@ class UserLootingClass extends UserLootingModel {
       });
 
       return createdDoc;
-    } catch {
-      return null;
+    } catch (error) {
+      throw new Error(error);
     }
   }
 
@@ -53,8 +53,8 @@ class UserLootingClass extends UserLootingModel {
       });
 
       return foundDoc;
-    } catch {
-      return null;
+    } catch (error) {
+      throw new Error(error);
     }
   }
 
@@ -63,8 +63,8 @@ class UserLootingClass extends UserLootingModel {
       const foundDocs = await this.find({ createdBy: userId });
 
       return foundDocs;
-    } catch {
-      return [];
+    } catch (error) {
+      throw new Error(error);
     }
   }
 
@@ -78,22 +78,18 @@ class UserLootingClass extends UserLootingModel {
       });
 
       return foundDocs;
-    } catch {
-      return [];
+    } catch (error) {
+      throw new Error(error);
     }
   }
 
   static async getUserLootingById(id: string): Promise<UserLootingDoc | null> {
     try {
-      if (!id) return null;
-
       const foundDoc = await this.findOne({ _id: id });
 
-      if (!foundDoc) return null;
-
       return foundDoc;
-    } catch {
-      return null;
+    } catch (error) {
+      throw new Error(error);
     }
   }
 }

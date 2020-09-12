@@ -4,7 +4,7 @@ import ExtendedRequest from '../interfaces/requests/ExtendedRequest';
 import { LOGS } from '../constants';
 
 import { errorHandler, successResponse, validateUnitPromotion } from '../utils';
-import { UnitService, UserLootingsService } from '../services';
+import { UnitService } from '../services';
 
 const postCreateUnit = async (req: ExtendedRequest, res: Response) => {
   if (!req.userId) return errorHandler(res, LOGS.ERROR.UNAUTHORIZED);
@@ -35,46 +35,6 @@ const postPromoteUnitById = async (req: ExtendedRequest, res: Response) => {
     return successResponse(res, LOGS.SUCCESS.UNIT_PROMOTE, updatedUnit);
   } catch (error) {
     return errorHandler(res, LOGS.ERROR.UNIT_PROMOTE);
-  }
-};
-
-const postAssignLootingToUnits = async (
-  req: ExtendedRequest,
-  res: Response,
-) => {
-  const { lootingId, unitIds } = req.body;
-
-  try {
-    const units = await UnitService.assignLootingToUnits(lootingId, unitIds);
-
-    return successResponse(res, LOGS.SUCCESS.LOOTING_ASSIGN, units);
-  } catch (error) {
-    return errorHandler(res, LOGS.ERROR.LOOTING_ASSIGN);
-  }
-};
-
-const postFinishLootingForUnits = async (
-  req: ExtendedRequest,
-  res: Response,
-) => {
-  const { lootingId, unitIds } = req.body;
-
-  if (!lootingId || !unitIds) {
-    return errorHandler(res, LOGS.ERROR.INVALID_REQUEST);
-  }
-
-  let xpGain = await UserLootingsService.getLootingById(lootingId).then(
-    (doc) => doc?.xpGain,
-  );
-
-  if (!xpGain) return errorHandler(res, LOGS.ERROR.LOOTING_NOT_EXIST);
-
-  try {
-    const units = await UnitService.finishLootingForUnits(unitIds, xpGain);
-
-    return successResponse(res, LOGS.SUCCESS.UNITS_FINISHED_LOOTING, units);
-  } catch (error) {
-    return errorHandler(res, LOGS.ERROR.UNITS_FINISHED_LOOTING);
   }
 };
 
@@ -149,8 +109,6 @@ const deleteUnitsDB = async (req: ExtendedRequest, res: Response) => {
 export {
   postCreateUnit,
   postPromoteUnitById,
-  postAssignLootingToUnits,
-  postFinishLootingForUnits,
   getUnitById,
   getAllUserUnits,
   getAllUnits,
