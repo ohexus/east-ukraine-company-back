@@ -65,19 +65,31 @@ export default class UnitClass extends UnitModel {
       promotion: UNITS.XP_PROMOTION[nextRank],
     };
 
-    return nextRank !== unitDoc.rank
-      ? await unitDoc.update({ rank: nextRank, xp: newXp }, { new: true })
-      : unitDoc;
+    const updatedDoc =
+      nextRank !== unitDoc.rank
+        ? await this.findOneAndUpdate(
+            { _id: id },
+            { rank: nextRank, xp: newXp },
+            { new: true },
+          )
+        : unitDoc;
+
+    return updatedDoc;
   }
 
   static async assignLootingToUnits(
     lootingId: string,
     unitIds: string[],
   ): Promise<UnitDoc[]> {
-    const unitDocs = (await this.updateMany(
-      { _id: { $in: unitIds } },
-      { lootingId },
-    )) as UnitDoc[];
+    const unitDocs = await this.find({ _id: { $in: unitIds } }).then((docs) =>
+      docs.map((doc) => {
+        doc.lootingId = lootingId;
+
+        doc.save();
+
+        return doc;
+      }),
+    );
 
     return unitDocs;
   }
@@ -91,11 +103,11 @@ export default class UnitClass extends UnitModel {
         doc.lootingId = null;
         doc.xp.current += xpGain;
 
+        doc.save();
+
         return doc;
       }),
     );
-
-    unitDocs.forEach(async (doc) => await doc.save());
 
     return unitDocs;
   }
