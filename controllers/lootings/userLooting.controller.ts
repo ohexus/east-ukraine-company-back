@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import ExtendedRequest from '../../interfaces/requests/ExtendedRequest';
 
 import { LOGS } from '../../constants';
@@ -35,7 +35,7 @@ const postCreateUserLooting = async (req: ExtendedRequest, res: Response) => {
     );
 
     if (!userLooting) return errorHandler(res, LOGS.ERROR.LOOTING_CREATE);
-    
+
     const units = await UnitService.assignLootingToUnits(lootingId, unitIds);
 
     if (!units) return errorHandler(res, LOGS.ERROR.LOOTING_ASSIGN);
