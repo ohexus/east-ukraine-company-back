@@ -16,7 +16,7 @@ const unitSchema = new Schema(
     name: { type: String, required: true },
     gender: { type: String, required: true },
 
-    avatarBuffer: { buffer: Buffer, contentType: String },
+    pathToAvatar: { type: String, required: true },
 
     rank: { type: String, required: true },
     salary: { type: Number, required: true },

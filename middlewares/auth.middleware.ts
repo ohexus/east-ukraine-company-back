@@ -3,7 +3,7 @@ import config from 'config';
 import { Response, NextFunction } from 'express';
 
 import { LOGS } from '../constants';
-import { errorHandler, successResponse } from '../utils';
+import { errorHandler } from '../utils';
 
 import userService from '../services/user.service';
 import ExtendedRequest from '../interfaces/requests/ExtendedRequest';

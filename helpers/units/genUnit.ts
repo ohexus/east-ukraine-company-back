@@ -18,7 +18,7 @@ export default function genUnit(
   const gender: Genders = genGender();
   const name: string = genName(gender);
 
-  const avatarBuffer: AvatarBuffer = genAvatar(gender);
+  const pathToAvatar: string = genAvatar(gender);
 
   const unitRank: UnitRankKeys = rank || (UNITS.RANK.BARQUE as UnitRankKeys);
   const salary: number = UNITS.SALARY[unitRank];
@@ -32,7 +32,7 @@ export default function genUnit(
     createdBy: userId,
     name,
     gender,
-    avatarBuffer,
+    pathToAvatar,
     rank: unitRank,
     salary,
     xp,

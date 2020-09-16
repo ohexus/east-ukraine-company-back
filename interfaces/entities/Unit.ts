@@ -11,7 +11,8 @@ export interface Unit {
   gender: Genders;
   name: string;
 
-  avatarBuffer: AvatarBuffer;
+  // avatarBuffer: AvatarBuffer;
+  pathToAvatar: string;
 
   rank: UnitRankKeys;
   salary: number;
