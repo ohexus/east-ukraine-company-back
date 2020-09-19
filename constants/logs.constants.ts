@@ -20,6 +20,7 @@ const LOGS = {
     LOOTING_CREATE: 'Looting created successfully',
     LOOTING_FINISH: 'Looting finished successfully',
     LOOTING_ASSIGN: 'Looting assigned to units successfully',
+    LOOTING_UPDATE: 'Looting updated successfully',
   },
   ERROR: {
     DEFAULT: 'Request failed!',
@@ -46,6 +47,7 @@ const LOGS = {
     LOOTING_NOT_EXIST: "Looting doesn't exist!",
     LOOTING_FINISH: 'Failed to finish looting',
     LOOTING_ASSIGN: 'Failed to assign looting to units',
+    LOOTING_UPDATE: 'Failed to update looting',
   },
 };
 

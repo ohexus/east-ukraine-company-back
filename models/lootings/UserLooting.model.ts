@@ -1,18 +1,27 @@
 import { Schema, model, Types } from 'mongoose';
 
+import calcTimeByXp from '../../helpers/calcTimeByXp';
+
 import { UserLootingDoc, Looting } from '../../interfaces/entities/Looting';
 
 const userLootingSchema: Schema = new Schema<UserLootingDoc>({
   createdBy: { type: Types.ObjectId, ref: 'User', required: true },
 
   title: { type: String, required: true },
-  description: { type: String, required: true},
+  description: { type: String, required: true },
 
   xpGain: { type: Number, default: 500 },
 
   isStarted: { type: Boolean, default: false },
 
   units: { type: [{ type: Types.ObjectId, ref: 'Unit' }], default: [] },
+
+  timer: {
+    // ms
+    left: { type: Number, required: true },
+    total: { type: Number, required: true },
+    status: { type: Boolean, default: false },
+  },
 });
 
 const UserLootingModel = model<UserLootingDoc>(
@@ -28,6 +37,8 @@ class UserLootingClass extends UserLootingModel {
   ): Promise<UserLootingDoc> {
     const { title, description, xpGain } = looting;
 
+    const totalTimeToFinish = calcTimeByXp(xpGain);
+
     try {
       const createdDoc = await this.create({
         createdBy: userId,
@@ -36,6 +47,11 @@ class UserLootingClass extends UserLootingModel {
         xpGain,
         isStarted: true,
         units: unitIds,
+        timer: {
+          total: totalTimeToFinish,
+          left: totalTimeToFinish,
+          status: true,
+        },
       });
 
       return createdDoc;
@@ -48,9 +64,38 @@ class UserLootingClass extends UserLootingModel {
     lootingId: string,
   ): Promise<UserLootingDoc | null> {
     try {
-      const foundDoc = await this.findByIdAndUpdate(lootingId, {
-        isStarted: false,
-      });
+      const foundDoc = await this.findById(lootingId);
+
+      if (!foundDoc) return null;
+
+      foundDoc.isStarted = false;
+      foundDoc.timer = {
+        total: foundDoc.timer.total,
+        left: foundDoc.timer.left,
+        status: false,
+      };
+
+      await foundDoc.save();
+
+      return foundDoc;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  static async updateTimeLeft(
+    lootingId: string,
+    timeLeft: number,
+  ): Promise<UserLootingDoc | null> {
+    try {
+      const foundDoc = await this.findById(lootingId);
+
+      if (!foundDoc) return null;
+
+      foundDoc.timer.left = timeLeft || 0;
+      foundDoc.timer.status = !!timeLeft;
+
+      await foundDoc.save();
 
       return foundDoc;
     } catch (error) {

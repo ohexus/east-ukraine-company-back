@@ -51,8 +51,6 @@ const postCreateUserLooting = async (req: ExtendedRequest, res: Response) => {
 };
 
 const postFinishUserLooting = async (req: ExtendedRequest, res: Response) => {
-  if (!req.userId) return errorHandler(res, LOGS.ERROR.UNAUTHORIZED);
-
   const { lootingId } = req.body;
 
   if (!lootingId) return errorHandler(res, LOGS.ERROR.INVALID_REQUEST);
@@ -87,10 +85,36 @@ const postFinishUserLooting = async (req: ExtendedRequest, res: Response) => {
   }
 };
 
-const getAllUserLootings = async (req: ExtendedRequest, res: Response) => {
-  try {
-    if (!req.userId) return errorHandler(res, LOGS.ERROR.UNAUTHORIZED);
+const postUpdateTimeLeft = async (req: ExtendedRequest, res: Response) => {
+  const { lootingId, timeLeft } = req.body;
 
+  if (!lootingId) return errorHandler(res, LOGS.ERROR.INVALID_REQUEST);
+
+  const userLooting = await UserLootingsService.getLootingById(lootingId);
+
+  if (!userLooting) return errorHandler(res, LOGS.ERROR.LOOTING_NOT_EXIST);
+
+  try {
+    const updatedUserLooting = await UserLootingsService.updateTimeLeft(
+      userLooting._id,
+      timeLeft,
+    );
+
+    if (!updatedUserLooting)
+      return errorHandler(res, LOGS.ERROR.LOOTING_UPDATE);
+
+    return successResponse(res, LOGS.SUCCESS.LOOTING_UPDATE, {
+      looting: updatedUserLooting,
+    });
+  } catch {
+    return errorHandler(res, LOGS.ERROR.LOOTING_FINISH);
+  }
+};
+
+const getAllUserLootings = async (req: ExtendedRequest, res: Response) => {
+  if (!req.userId) return errorHandler(res, LOGS.ERROR.UNAUTHORIZED);
+
+  try {
     const lootings = await UserLootingsService.getAllUserLootings(req.userId);
 
     return successResponse(res, LOGS.SUCCESS.DEFAULT, lootings);
@@ -103,9 +127,9 @@ const getAllStartedUserLootings = async (
   req: ExtendedRequest,
   res: Response,
 ) => {
-  try {
-    if (!req.userId) return errorHandler(res, LOGS.ERROR.UNAUTHORIZED);
+  if (!req.userId) return errorHandler(res, LOGS.ERROR.UNAUTHORIZED);
 
+  try {
     const lootings = await UserLootingsService.getAllStartedUserLootings(
       req.userId,
     );
@@ -116,8 +140,6 @@ const getAllStartedUserLootings = async (
   }
 };
 const getUserLootingById = async (req: ExtendedRequest, res: Response) => {
-  if (!req.userId) return errorHandler(res, LOGS.ERROR.UNAUTHORIZED);
-
   const { id } = req.params;
 
   if (!id) return errorHandler(res, LOGS.ERROR.INVALID_REQUEST);
@@ -134,6 +156,7 @@ const getUserLootingById = async (req: ExtendedRequest, res: Response) => {
 export {
   postCreateUserLooting,
   postFinishUserLooting,
+  postUpdateTimeLeft,
   getAllUserLootings,
   getAllStartedUserLootings,
   getUserLootingById,

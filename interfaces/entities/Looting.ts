@@ -13,6 +13,12 @@ export interface UserLootingDoc extends Looting, Document {
   isStarted: boolean;
 
   units: string[];
+
+  timer: { // ms
+    total: number,
+    left: number,
+    status: boolean,
+  },
 }
 
 export interface LootingDataDoc extends Looting, Document {}

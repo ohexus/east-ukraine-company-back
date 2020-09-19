@@ -23,6 +23,18 @@ class UserLootingsService {
     return UserLootingDoc;
   }
 
+  async updateTimeLeft(
+    lootingId: string,
+    timeLeft: number,
+  ): Promise<UserLootingDoc | null> {
+    const UserLootingDoc = await UserLootingClass.updateTimeLeft(
+      lootingId,
+      timeLeft,
+    );
+
+    return UserLootingDoc;
+  }
+
   async getAllUserLootings(userId: string): Promise<UserLootingDoc[]> {
     const UserLootingDocs = await UserLootingClass.getAllUserLootings(userId);
 

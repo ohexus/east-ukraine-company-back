@@ -4,6 +4,7 @@ import ExtendedRequest from '../../interfaces/requests/ExtendedRequest';
 import {
   postCreateUserLooting,
   postFinishUserLooting,
+  postUpdateTimeLeft,
   getAllUserLootings,
   getAllStartedUserLootings,
   getUserLootingById,
@@ -16,6 +17,10 @@ router.post('/create', (req: ExtendedRequest, res: Response) =>
 );
 router.post('/finish', (req: ExtendedRequest, res: Response) =>
   postFinishUserLooting(req, res),
+);
+
+router.post('/update-time', (req: ExtendedRequest, res: Response) =>
+  postUpdateTimeLeft(req, res),
 );
 
 router.get('/all', (req: ExtendedRequest, res: Response) =>
