@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import config from 'config';
 import log4js from 'log4js';
 
+import { LOGS } from './constants';
 import { connectDB } from './utils';
 
 import authMiddleware from './middlewares/auth.middleware';
@@ -37,7 +38,7 @@ app.use(express.json());
 app.use(express.static(__dirname + '/public'));
 
 if (!dbConnection) {
-  //   return;
+  throw new Error(LOGS.ERROR.DB_CONNECTION);
 }
 
 if (!isProduction) {
