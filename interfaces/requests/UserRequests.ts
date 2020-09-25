@@ -1,10 +1,12 @@
+import { UserDoc } from "../entities/User";
+
 export interface UserLogInRequest {
-  login: string;
-  password: string;
+  login: UserDoc['email'] | UserDoc['username'];
+  password: UserDoc['password'];
 }
 
 export interface UserSignUpRequest {
-  username: string;
-  email: string;
-  password: string;
+  username: UserDoc['username'];
+  email: UserDoc['email'];
+  password: UserDoc['password'];
 }

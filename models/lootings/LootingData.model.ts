@@ -48,7 +48,9 @@ class LootingDataClass extends LootingDataModel {
     }
   }
 
-  static async getLootingById(id: string): Promise<LootingDataDoc | null> {
+  static async getLootingById(
+    id: LootingDataDoc['_id'],
+  ): Promise<LootingDataDoc | null> {
     try {
       if (!id) return null;
 

@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 
 import {
+  getCurrentUser,
   getUserById,
   getAllUsers,
   deleteUserById,
@@ -12,6 +13,8 @@ const router = Router();
 // const upload = multer({ dest: 'uploads/' });
 
 router.get('/all', (req: Request, res: Response) => getAllUsers(req, res));
+
+router.get('/me', (req: Request, res: Response) => getCurrentUser(req, res));
 
 router.get('/:id', (req: Request, res: Response) => getUserById(req, res));
 router.delete('/:id', (req: Request, res: Response) =>

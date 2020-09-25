@@ -1,11 +1,15 @@
-export interface addLootingToUserRequest {
-  lootingId: string;
-  userId: string;
-  unitIds: string[];
+import { LootingDataDoc } from '../entities/Looting';
+import { UserDoc } from '../entities/User';
+import { UnitDoc } from '../entities/Unit';
+
+export interface createUserLootingRequest {
+  lootingDataId: LootingDataDoc['_id'];
+  userId: UserDoc['_id'];
+  unitIds: Array<UnitDoc['_id']>;
 }
 
 export interface LootingDataCreateRequest {
-  title: string;
-  description: string;
-  xpGain?: number;
+  title: LootingDataDoc['title'];
+  description: LootingDataDoc['description'];
+  xpGain?: LootingDataDoc['xpGain'];
 }

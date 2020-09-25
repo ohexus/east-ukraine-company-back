@@ -11,19 +11,21 @@ import {
   UserLootingsService,
 } from '../../services';
 
-import { addLootingToUserRequest } from '../../interfaces/requests/LootingRequests';
+import { createUserLootingRequest } from '../../interfaces/requests/LootingRequests';
 import { Looting } from '../../interfaces/entities/Looting';
 
 const postCreateUserLooting = async (req: ExtendedRequest, res: Response) => {
   if (!req.userId) return errorHandler(res, LOGS.ERROR.UNAUTHORIZED);
 
-  const { lootingId, unitIds }: addLootingToUserRequest = req.body;
+  const { lootingDataId, unitIds }: createUserLootingRequest = req.body;
 
-  if (!lootingId || !unitIds) {
+  if (!lootingDataId || !unitIds) {
     return errorHandler(res, LOGS.ERROR.INVALID_REQUEST);
   }
 
-  const foundLootingData = await LootingDataService.getLootingById(lootingId);
+  const foundLootingData = await LootingDataService.getLootingById(
+    lootingDataId,
+  );
 
   if (!foundLootingData) return errorHandler(res, LOGS.ERROR.LOOTING_NOT_EXIST);
 
@@ -36,7 +38,7 @@ const postCreateUserLooting = async (req: ExtendedRequest, res: Response) => {
 
     if (!userLooting) return errorHandler(res, LOGS.ERROR.LOOTING_CREATE);
 
-    const units = await UnitService.assignLootingToUnits(lootingId, unitIds);
+    const units = await UnitService.assignLootingToUnits(userLooting._id, unitIds);
 
     if (!units) return errorHandler(res, LOGS.ERROR.LOOTING_ASSIGN);
 

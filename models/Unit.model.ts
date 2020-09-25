@@ -5,7 +5,10 @@ import { UNITS } from '../constants';
 import genUnit from '../helpers/units/genUnit';
 import getNextRank from '../helpers/units/ranks/getNextRank';
 
+import { UserLootingDoc } from '../interfaces/entities/Looting';
 import { UnitDoc } from '../interfaces/entities/Unit';
+import { UserDoc } from '../interfaces/entities/User';
+
 import { UnitRankKeys } from '../interfaces/units/UnitRank';
 import { UnitXp } from '../interfaces/units/UnitXp';
 
@@ -44,7 +47,7 @@ const UnitModel = model<UnitDoc>('Unit', unitSchema);
 export default class UnitClass extends UnitModel {
   static async createUnit(
     rank: UnitRankKeys | undefined,
-    userId: string,
+    userId: UserDoc['_id'],
   ): Promise<UnitDoc> {
     const newUnit = genUnit(rank, userId);
 
@@ -53,7 +56,7 @@ export default class UnitClass extends UnitModel {
     return createdDoc;
   }
 
-  static async promoteUnitById(id: string): Promise<UnitDoc | null> {
+  static async promoteUnitById(id: UnitDoc['_id']): Promise<UnitDoc | null> {
     const unitDoc = await this.findOne({ _id: id });
 
     if (!unitDoc) return null;
@@ -78,47 +81,57 @@ export default class UnitClass extends UnitModel {
   }
 
   static async assignLootingToUnits(
-    lootingId: string,
-    unitIds: string[],
+    lootingId: UserLootingDoc['_id'],
+    unitIds: Array<UnitDoc['_id']>,
   ): Promise<UnitDoc[]> {
-    const unitDocs = await this.find({ _id: { $in: unitIds } }).then((docs) =>
-      docs.map((doc) => {
-        doc.lootingId = lootingId;
-
-        doc.save();
-
-        return doc;
-      }),
+    const unitDocs = await this.updateMany(
+      { _id: { $in: unitIds } },
+      { lootingId },
     );
+
+    // const unitDocs = await this.find({ _id: { $in: unitIds } }).then((docs) =>
+    //   docs.map((doc) => {
+    //     doc.lootingId = lootingId;
+
+    //     doc.save();
+
+    //     return doc;
+    //   }),
+    // );
 
     return unitDocs;
   }
 
   static async finishLootingForUnits(
-    unitIds: string[],
-    xpGain: number,
+    unitIds: Array<UnitDoc['_id']>,
+    xpGain: UserLootingDoc['xpGain'],
   ): Promise<UnitDoc[]> {
-    const unitDocs = await this.find({ _id: { $in: unitIds } }).then((docs) =>
-      docs.map((doc) => {
-        doc.lootingId = null;
-        doc.xp.current += xpGain;
-
-        doc.save();
-
-        return doc;
-      }),
+    const unitDocs = await this.updateMany(
+      { _id: { $in: unitIds } },
+      { lootingId: null, $inc: { 'xp.current': xpGain } },
     );
+
+    // const unitDocs = await this.find({ _id: { $in: unitIds } }).then((docs) =>
+    //   docs.map((doc) => {
+    //     doc.lootingId = null;
+    //     doc.xp.current += xpGain;
+
+    //     doc.save();
+
+    //     return doc;
+    //   }),
+    // );
 
     return unitDocs;
   }
 
-  static async getUnitById(unitId: string): Promise<UnitDoc | null> {
+  static async getUnitById(unitId: UnitDoc['_id']): Promise<UnitDoc | null> {
     const unitDoc = await this.findOne({ _id: unitId });
 
     return unitDoc;
   }
 
-  static async getAllUserUnits(userId: string): Promise<UnitDoc[]> {
+  static async getAllUserUnits(userId: UserDoc['_id']): Promise<UnitDoc[]> {
     const unitDocs = await this.find({ createdBy: userId });
 
     return unitDocs;
@@ -130,7 +143,7 @@ export default class UnitClass extends UnitModel {
     return unitDocs;
   }
 
-  static async deleteUnitById(unitId: string): Promise<UnitDoc | null> {
+  static async deleteUnitById(unitId: UnitDoc['_id']): Promise<UnitDoc | null> {
     const deletedUnit = await this.findByIdAndDelete(unitId);
 
     return deletedUnit;

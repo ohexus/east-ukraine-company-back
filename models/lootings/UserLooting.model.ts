@@ -3,6 +3,8 @@ import { Schema, model, Types } from 'mongoose';
 import calcTimeByXp from '../../helpers/calcTimeByXp';
 
 import { UserLootingDoc, Looting } from '../../interfaces/entities/Looting';
+import { UnitDoc } from '../../interfaces/entities/Unit';
+import { UserDoc } from '../../interfaces/entities/User';
 
 const userLootingSchema: Schema = new Schema<UserLootingDoc>({
   createdBy: { type: Types.ObjectId, ref: 'User', required: true },
@@ -32,8 +34,8 @@ const UserLootingModel = model<UserLootingDoc>(
 class UserLootingClass extends UserLootingModel {
   static async createUserLooting(
     looting: Looting,
-    userId: string,
-    unitIds: string[],
+    userId: UserDoc['_id'],
+    unitIds: Array<UnitDoc['_id']>,
   ): Promise<UserLootingDoc> {
     const { title, description, xpGain } = looting;
 
@@ -61,7 +63,7 @@ class UserLootingClass extends UserLootingModel {
   }
 
   static async finishUserLooting(
-    lootingId: string,
+    lootingId: UserLootingDoc['_id'],
   ): Promise<UserLootingDoc | null> {
     try {
       const foundDoc = await this.findById(lootingId);
@@ -84,8 +86,8 @@ class UserLootingClass extends UserLootingModel {
   }
 
   static async updateTimeLeft(
-    lootingId: string,
-    timeLeft: number,
+    lootingId: UserLootingDoc['_id'],
+    timeLeft: UserLootingDoc['timer']['left'],
   ): Promise<UserLootingDoc | null> {
     try {
       const foundDoc = await this.findById(lootingId);
@@ -103,7 +105,9 @@ class UserLootingClass extends UserLootingModel {
     }
   }
 
-  static async getAllUserLootings(userId: string): Promise<UserLootingDoc[]> {
+  static async getAllUserLootings(
+    userId: UserDoc['_id'],
+  ): Promise<UserLootingDoc[]> {
     try {
       const foundDocs = await this.find({ createdBy: userId });
 
@@ -114,7 +118,7 @@ class UserLootingClass extends UserLootingModel {
   }
 
   static async getAllStartedUserLootings(
-    userId: string,
+    userId: UserDoc['_id'],
   ): Promise<UserLootingDoc[]> {
     try {
       const foundDocs = await this.find({
@@ -128,7 +132,9 @@ class UserLootingClass extends UserLootingModel {
     }
   }
 
-  static async getUserLootingById(id: string): Promise<UserLootingDoc | null> {
+  static async getUserLootingById(
+    id: UserLootingDoc['_id'],
+  ): Promise<UserLootingDoc | null> {
     try {
       const foundDoc = await this.findOne({ _id: id });
 
