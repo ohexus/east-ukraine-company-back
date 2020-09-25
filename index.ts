@@ -7,6 +7,7 @@ import log4js from 'log4js';
 import { LOGS } from './constants';
 import { connectDB } from './utils';
 
+import accessControlMiddleware from './middlewares/accessControl.middleware';
 import authMiddleware from './middlewares/auth.middleware';
 
 import authRouter from './routes/auth.routes';
@@ -26,6 +27,8 @@ const dbConnection = connectDB();
 const logger = log4js.getLogger();
 
 logger.level = config.get('LOGGER_LVL');
+
+app.use(accessControlMiddleware);
 
 app.use(
   cors({
