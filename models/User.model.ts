@@ -1,4 +1,6 @@
-import { Schema, model, Types } from 'mongoose';
+import { Schema, model } from 'mongoose';
+
+import { GAME } from '../constants';
 
 import { UserDoc } from '../interfaces/entities/User';
 import {
@@ -12,9 +14,11 @@ const userSchema: Schema = new Schema(
     username: { type: String, unique: true, required: true },
     password: { type: String, required: true },
 
-    lootings: {
-      type: [{ type: Types.ObjectId, ref: 'Looting' }],
-      default: [],
+    game: {
+      money: {
+        type: Number,
+        default: GAME.MONEY.INIT,
+      },
     },
   },
   { timestamps: true },
@@ -23,7 +27,7 @@ const userSchema: Schema = new Schema(
 const UserModel = model<UserDoc>('User', userSchema);
 
 export default class UserClass extends UserModel {
-  static async createUser(user: UserSignUpRequest): Promise<UserDoc | null> {
+  static async createUser(user: UserSignUpRequest): Promise<UserDoc> {
     try {
       const { username, email, password } = user;
 
@@ -31,18 +35,42 @@ export default class UserClass extends UserModel {
         username,
         email,
         password,
+
+        game: {
+          money: GAME.MONEY.INIT,
+        },
       });
 
       return createdDoc;
-    } catch {
-      return null;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  static async updateMoney(
+    userId: UserDoc['_id'],
+    money: UserDoc['game']['money'],
+  ): Promise<UserDoc | null> {
+    try {
+      const updatedDoc: UserDoc | null = await this.findOneAndUpdate(
+        { _id: userId },
+        { 'game.money': money },
+      );
+
+      return updatedDoc;
+    } catch (error) {
+      throw new Error(error);
     }
   }
 
   static async getAllUsers(): Promise<UserDoc[]> {
-    const docs: UserDoc[] = await this.find({});
+    try {
+      const docs: UserDoc[] = await this.find({});
 
-    return docs;
+      return docs;
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   static async getUser(user: UserLogInRequest): Promise<UserDoc | null> {
@@ -56,32 +84,28 @@ export default class UserClass extends UserModel {
       });
 
       return foundDoc;
-    } catch {
-      return null;
+    } catch (error) {
+      throw new Error(error);
     }
   }
 
-  static async getUserById(id: string): Promise<UserDoc | null> {
+  static async getUserById(id: UserDoc['_id']): Promise<UserDoc | null> {
     try {
-      if (!id) return null;
-
       const foundDoc: UserDoc | null = await this.findOne({ _id: id });
 
       return foundDoc;
-    } catch {
-      return null;
+    } catch (error) {
+      throw new Error(error);
     }
   }
 
-  static async deleteUserById(id: string): Promise<UserDoc | null> {
+  static async deleteUserById(id: UserDoc['_id']): Promise<UserDoc | null> {
     try {
-      if (!id) return null;
-
       const foundDoc: UserDoc | null = await this.findOneAndDelete({ _id: id });
 
       return foundDoc;
-    } catch {
-      return null;
+    } catch (error) {
+      throw new Error(error);
     }
   }
 }
