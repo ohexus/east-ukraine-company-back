@@ -19,7 +19,7 @@ const postCreateUserLooting = async (req: ExtendedRequest, res: Response) => {
 
   const { lootingDataId, unitIds }: createUserLootingRequest = req.body;
 
-  if (!lootingDataId || !unitIds) {
+  if (!lootingDataId || !unitIds || !unitIds.length) {
     return errorHandler(res, LOGS.ERROR.INVALID_REQUEST);
   }
 
@@ -38,7 +38,10 @@ const postCreateUserLooting = async (req: ExtendedRequest, res: Response) => {
 
     if (!userLooting) return errorHandler(res, LOGS.ERROR.LOOTING_CREATE);
 
-    const units = await UnitService.assignLootingToUnits(userLooting._id, unitIds);
+    const units = await UnitService.assignLootingToUnits(
+      userLooting._id,
+      unitIds,
+    );
 
     if (!units) return errorHandler(res, LOGS.ERROR.LOOTING_ASSIGN);
 

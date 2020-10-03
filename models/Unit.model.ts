@@ -84,20 +84,9 @@ export default class UnitClass extends UnitModel {
     lootingId: UserLootingDoc['_id'],
     unitIds: Array<UnitDoc['_id']>,
   ): Promise<UnitDoc[]> {
-    const unitDocs = await this.updateMany(
-      { _id: { $in: unitIds } },
-      { lootingId },
-    );
+    await this.updateMany({ _id: { $in: unitIds } }, { lootingId });
 
-    // const unitDocs = await this.find({ _id: { $in: unitIds } }).then((docs) =>
-    //   docs.map((doc) => {
-    //     doc.lootingId = lootingId;
-
-    //     doc.save();
-
-    //     return doc;
-    //   }),
-    // );
+    const unitDocs = await this.find({ _id: { $in: unitIds } });
 
     return unitDocs;
   }
@@ -106,21 +95,12 @@ export default class UnitClass extends UnitModel {
     unitIds: Array<UnitDoc['_id']>,
     xpGain: UserLootingDoc['xpGain'],
   ): Promise<UnitDoc[]> {
-    const unitDocs = await this.updateMany(
+    await this.updateMany(
       { _id: { $in: unitIds } },
       { lootingId: null, $inc: { 'xp.current': xpGain } },
     );
 
-    // const unitDocs = await this.find({ _id: { $in: unitIds } }).then((docs) =>
-    //   docs.map((doc) => {
-    //     doc.lootingId = null;
-    //     doc.xp.current += xpGain;
-
-    //     doc.save();
-
-    //     return doc;
-    //   }),
-    // );
+    const unitDocs = await this.find({ _id: { $in: unitIds } });
 
     return unitDocs;
   }
