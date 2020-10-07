@@ -11,7 +11,7 @@ import ExtendedRequest from '../interfaces/requests/ExtendedRequest';
 export default async function authMiddleware(
   req: ExtendedRequest,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) {
   try {
     const jwt_token = req.header('authorization');
@@ -23,7 +23,7 @@ export default async function authMiddleware(
     try {
       const decriptedToken = jwt.verify(
         jwt_token,
-        config.get('JWT_SECRET'),
+        process.env.JWT_SECRET || config.get('JWT_SECRET')
       ) as {
         userId: string;
       };
