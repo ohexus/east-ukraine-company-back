@@ -12,8 +12,7 @@ import authMiddleware from './middlewares/auth.middleware';
 import authRouter from './routes/auth.routes';
 import userRouter from './routes/user.routes';
 import unitRouter from './routes/unit.routes';
-import lootingRouter from './routes/lootings';
-import showReqMiddleware from './middlewares/showReq.middleware';
+import lootingRouter from './routes/lootings.routes';
 
 const app: Application = express();
 
@@ -49,8 +48,6 @@ app.use(authMiddleware);
 app.use('/api/user', userRouter);
 app.use('/api/unit', unitRouter);
 app.use('/api/looting', lootingRouter);
-
-app.use(showReqMiddleware)
 
 
 // start server
