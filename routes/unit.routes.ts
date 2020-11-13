@@ -1,5 +1,5 @@
 import { Response, Router } from 'express';
-import ExtendedRequest from '../interfaces/requests/ExtendedRequest';
+import ExtendedRequest from '../interfaces/http/requests/ExtendedRequest';
 import {
   postCreateUnit,
   postPromoteUnitById,

@@ -3,7 +3,7 @@ import { UserClass } from '../models';
 import {
   UserSignUpRequest,
   UserLogInRequest,
-} from '../interfaces/requests/UserRequests';
+} from '../interfaces/http/requests/UserRequests';
 import { UserDoc } from '../interfaces/entities/User';
 
 class UsersService {

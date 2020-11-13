@@ -12,13 +12,11 @@ import authMiddleware from './middlewares/auth.middleware';
 import authRouter from './routes/auth.routes';
 import userRouter from './routes/user.routes';
 import unitRouter from './routes/unit.routes';
-import lootingRouter from './routes/lootings.routes';
+import lootingRouter from './routes/looting.routes';
 
 const app: Application = express();
 
-const isProduction: boolean = !!(
-  process.env.PRODUCTION || config.get('PRODUCTION')
-);
+const isProduction: boolean = !!(process.env.PRODUCTION || config.get('PRODUCTION'));
 
 const dbConnection = connectDB();
 const logger = log4js.getLogger();
@@ -48,7 +46,6 @@ app.use(authMiddleware);
 app.use('/api/user', userRouter);
 app.use('/api/unit', unitRouter);
 app.use('/api/looting', lootingRouter);
-
 
 // start server
 

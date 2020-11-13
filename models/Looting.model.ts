@@ -1,16 +1,18 @@
 import { Schema, model, Types } from 'mongoose';
 
-import calcTimeByXp from '../../helpers/calcTimeByXp';
+import calcTimeByXp from '../helpers/calcTimeByXp';
 
-import { UserLootingDoc, Looting } from '../../interfaces/entities/Looting';
-import { UnitDoc } from '../../interfaces/entities/Unit';
-import { UserDoc } from '../../interfaces/entities/User';
+import { LootingDoc, Looting } from '../interfaces/entities/Looting';
+import { UnitDoc } from '../interfaces/entities/Unit';
+import { UserDoc } from '../interfaces/entities/User';
 
-const userLootingSchema: Schema = new Schema<UserLootingDoc>({
+const lootingSchema: Schema = new Schema<LootingDoc>({
   createdBy: { type: Types.ObjectId, ref: 'User', required: true },
 
   title: { type: String, required: true },
-  description: { type: String, required: true },
+  desc: { type: String, required: true },
+
+  topic: { type: String, required: true },
 
   xpGain: { type: Number, default: 500 },
 
@@ -26,18 +28,15 @@ const userLootingSchema: Schema = new Schema<UserLootingDoc>({
   },
 });
 
-const UserLootingModel = model<UserLootingDoc>(
-  'UserLooting',
-  userLootingSchema,
-);
+const LootingModel = model<LootingDoc>('looting', lootingSchema);
 
-class UserLootingClass extends UserLootingModel {
-  static async createUserLooting(
+class LootingClass extends LootingModel {
+  static async createLooting(
     looting: Looting,
     userId: UserDoc['_id'],
-    unitIds: Array<UnitDoc['_id']>,
-  ): Promise<UserLootingDoc> {
-    const { title, description, xpGain } = looting;
+    unitIds: Array<UnitDoc['_id']>
+  ): Promise<LootingDoc> {
+    const { title, desc, topic, xpGain } = looting;
 
     const totalTimeToFinish = calcTimeByXp(xpGain);
 
@@ -45,7 +44,8 @@ class UserLootingClass extends UserLootingModel {
       const createdDoc = await this.create({
         createdBy: userId,
         title,
-        description,
+        desc,
+        topic,
         xpGain,
         isStarted: true,
         units: unitIds,
@@ -62,9 +62,7 @@ class UserLootingClass extends UserLootingModel {
     }
   }
 
-  static async finishUserLooting(
-    lootingId: UserLootingDoc['_id'],
-  ): Promise<UserLootingDoc | null> {
+  static async finishLooting(lootingId: LootingDoc['_id']): Promise<LootingDoc | null> {
     try {
       const foundDoc = await this.findById(lootingId);
 
@@ -86,9 +84,9 @@ class UserLootingClass extends UserLootingModel {
   }
 
   static async updateTimeLeft(
-    lootingId: UserLootingDoc['_id'],
-    timeLeft: UserLootingDoc['timer']['left'],
-  ): Promise<UserLootingDoc | null> {
+    lootingId: LootingDoc['_id'],
+    timeLeft: LootingDoc['timer']['left']
+  ): Promise<LootingDoc | null> {
     try {
       const foundDoc = await this.findById(lootingId);
 
@@ -105,9 +103,7 @@ class UserLootingClass extends UserLootingModel {
     }
   }
 
-  static async getAllUserLootings(
-    userId: UserDoc['_id'],
-  ): Promise<UserLootingDoc[]> {
+  static async getAllLootingsByUser(userId: UserDoc['_id']): Promise<LootingDoc[]> {
     try {
       const foundDocs = await this.find({ createdBy: userId });
 
@@ -117,9 +113,7 @@ class UserLootingClass extends UserLootingModel {
     }
   }
 
-  static async getAllStartedUserLootings(
-    userId: UserDoc['_id'],
-  ): Promise<UserLootingDoc[]> {
+  static async getAllStartedLootings(userId: UserDoc['_id']): Promise<LootingDoc[]> {
     try {
       const foundDocs = await this.find({
         createdBy: userId,
@@ -132,9 +126,7 @@ class UserLootingClass extends UserLootingModel {
     }
   }
 
-  static async getUserLootingById(
-    id: UserLootingDoc['_id'],
-  ): Promise<UserLootingDoc | null> {
+  static async getLootingById(id: LootingDoc['_id']): Promise<LootingDoc | null> {
     try {
       const foundDoc = await this.findOne({ _id: id });
 
@@ -145,4 +137,4 @@ class UserLootingClass extends UserLootingModel {
   }
 }
 
-export default UserLootingClass;
+export default LootingClass;

@@ -6,7 +6,7 @@ import { UserDoc } from '../interfaces/entities/User';
 import {
   UserSignUpRequest,
   UserLogInRequest,
-} from '../interfaces/requests/UserRequests';
+} from '../interfaces/http/requests/UserRequests';
 
 const userSchema: Schema = new Schema(
   {

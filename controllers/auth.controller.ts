@@ -12,7 +12,7 @@ import {
 
 import { UserService } from '../services';
 
-import { UserSignUpRequest } from '../interfaces/requests/UserRequests';
+import { UserSignUpRequest } from '../interfaces/http/requests/UserRequests';
 import { UserDoc } from '../interfaces/entities/User';
 
 const postSignUp = async (req: Request, res: Response) => {

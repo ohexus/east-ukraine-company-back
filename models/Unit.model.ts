@@ -5,7 +5,7 @@ import { UNITS } from '../constants';
 import genUnit from '../helpers/units/genUnit';
 import getNextRank from '../helpers/units/ranks/getNextRank';
 
-import { UserLootingDoc } from '../interfaces/entities/Looting';
+import { LootingDoc } from '../interfaces/entities/Looting';
 import { UnitDoc } from '../interfaces/entities/Unit';
 import { UserDoc } from '../interfaces/entities/User';
 
@@ -39,16 +39,13 @@ const unitSchema = new Schema(
       default: null,
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 const UnitModel = model<UnitDoc>('Unit', unitSchema);
 
 export default class UnitClass extends UnitModel {
-  static async createUnit(
-    rank: UnitRankKeys | undefined,
-    userId: UserDoc['_id'],
-  ): Promise<UnitDoc> {
+  static async createUnit(rank: UnitRankKeys | undefined, userId: UserDoc['_id']): Promise<UnitDoc> {
     const newUnit = genUnit(rank, userId);
 
     const createdDoc = await this.create(newUnit);
@@ -70,20 +67,13 @@ export default class UnitClass extends UnitModel {
 
     const updatedDoc =
       nextRank !== unitDoc.rank
-        ? await this.findOneAndUpdate(
-            { _id: id },
-            { rank: nextRank, xp: newXp },
-            { new: true },
-          )
+        ? await this.findOneAndUpdate({ _id: id }, { rank: nextRank, xp: newXp }, { new: true })
         : unitDoc;
 
     return updatedDoc;
   }
 
-  static async assignLootingToUnits(
-    lootingId: UserLootingDoc['_id'],
-    unitIds: Array<UnitDoc['_id']>,
-  ): Promise<UnitDoc[]> {
+  static async assignLootingToUnits(lootingId: LootingDoc['_id'], unitIds: Array<UnitDoc['_id']>): Promise<UnitDoc[]> {
     await this.updateMany({ _id: { $in: unitIds } }, { lootingId });
 
     const unitDocs = await this.find({ _id: { $in: unitIds } });
@@ -91,14 +81,8 @@ export default class UnitClass extends UnitModel {
     return unitDocs;
   }
 
-  static async finishLootingForUnits(
-    unitIds: Array<UnitDoc['_id']>,
-    xpGain: UserLootingDoc['xpGain'],
-  ): Promise<UnitDoc[]> {
-    await this.updateMany(
-      { _id: { $in: unitIds } },
-      { lootingId: null, $inc: { 'xp.current': xpGain } },
-    );
+  static async finishLootingForUnits(unitIds: Array<UnitDoc['_id']>, xpGain: LootingDoc['xpGain']): Promise<UnitDoc[]> {
+    await this.updateMany({ _id: { $in: unitIds } }, { lootingId: null, $inc: { 'xp.current': xpGain } });
 
     const unitDocs = await this.find({ _id: { $in: unitIds } });
 

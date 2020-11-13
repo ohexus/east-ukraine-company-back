@@ -6,25 +6,26 @@ import { LOGS } from '../constants';
 import { errorHandler } from '../utils';
 
 import userService from '../services/user.service';
-import ExtendedRequest from '../interfaces/requests/ExtendedRequest';
+import ExtendedRequest from '../interfaces/http/requests/ExtendedRequest';
+import dataAPI from '../utils/dataAPI';
+import { AxiosRequestConfig } from 'axios';
 
-export default async function authMiddleware(
-  req: ExtendedRequest,
-  res: Response,
-  next: NextFunction
-) {
+export default async function authMiddleware(req: ExtendedRequest, res: Response, next: NextFunction) {
   try {
     const jwt_token = req.header('authorization');
 
     if (!jwt_token) return errorHandler(res, LOGS.ERROR.UNAUTHORIZED);
 
+    dataAPI.interceptors.request.use((req: AxiosRequestConfig) => {
+      req.headers.Authorization = jwt_token;
+
+      return req;
+    });
+
     let userId: string;
 
     try {
-      const decriptedToken = jwt.verify(
-        jwt_token,
-        process.env.JWT_SECRET || config.get('JWT_SECRET')
-      ) as {
+      const decriptedToken = jwt.verify(jwt_token, process.env.JWT_SECRET || config.get('JWT_SECRET')) as {
         userId: string;
       };
 

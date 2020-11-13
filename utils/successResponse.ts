@@ -2,6 +2,8 @@ import { Response } from 'express';
 
 import { LOGS, STATUSES } from '../constants';
 
+import BackServerResponse from '../interfaces/http/responses/BackServerResponse';
+
 import log4js from 'log4js';
 const logger = log4js.getLogger();
 
@@ -9,7 +11,7 @@ export default function successResponse(
   res: Response,
   message: string = LOGS.SUCCESS.DEFAULT,
   payload: any | null = null,
-  status: number = STATUSES.RESPONSE.SUCCESS.DEFAULT,
+  status: number = STATUSES.RESPONSE.SUCCESS.DEFAULT
 ) {
   logger.info(message);
   return res.json({
@@ -17,5 +19,5 @@ export default function successResponse(
     payload,
     status,
     message,
-  });
+  } as BackServerResponse);
 }

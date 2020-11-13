@@ -1,4 +1,4 @@
-import { UserDoc } from "../entities/User";
+import { UserDoc } from '../../entities/User';
 
 export interface UserLogInRequest {
   login: UserDoc['email'] | UserDoc['username'];
