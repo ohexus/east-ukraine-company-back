@@ -16,7 +16,7 @@ import lootingRouter from './routes/looting.routes';
 
 const app: Application = express();
 
-const isProduction: boolean = !!(process.env.PRODUCTION || config.get('PRODUCTION'));
+const isProduction: boolean = process.env.NODE_ENV === 'production' || config.get('NODE_ENV') === 'production';
 
 const dbConnection = connectDB();
 const logger = log4js.getLogger();
