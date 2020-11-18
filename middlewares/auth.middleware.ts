@@ -14,7 +14,7 @@ export default async function authMiddleware(req: ExtendedRequest, res: Response
   try {
     const jwt_token = req.header('authorization');
 
-    if (!jwt_token) return errorHandler(res, LOGS.ERROR.UNAUTHORIZED);
+    if (!jwt_token) return errorHandler(res, LOGS.ERROR.UNAUTHORIZED, null, 401);
 
     dataAPI.interceptors.request.use((req: AxiosRequestConfig) => {
       req.headers.Authorization = jwt_token;
@@ -31,7 +31,7 @@ export default async function authMiddleware(req: ExtendedRequest, res: Response
 
       userId = decriptedToken.userId;
     } catch {
-      return errorHandler(res, LOGS.ERROR.JWT_EXPIRED);
+      return errorHandler(res, LOGS.ERROR.JWT_EXPIRED, null, 401);
     }
 
     const foundUser = await userService.getUserById(userId);
@@ -39,10 +39,10 @@ export default async function authMiddleware(req: ExtendedRequest, res: Response
     if (foundUser) {
       req.userId = userId;
     } else {
-      return errorHandler(res, LOGS.ERROR.USER_NOT_EXIST);
+      return errorHandler(res, LOGS.ERROR.USER_NOT_EXIST, null, 401);
     }
   } catch (error) {
-    return errorHandler(res, error.message);
+    return errorHandler(res, error.message, null, 401);
   }
 
   next();
