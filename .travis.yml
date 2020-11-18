@@ -1,6 +1,8 @@
 language: node_js
 node_js:
-  - stable
+- stable
+script:
+- echo "skipping tests"
 deploy:
   provider: heroku
   app: east-ukraine-company-back
@@ -8,6 +10,6 @@ deploy:
     secure: bBM5HKvQF+fJy+wZjGGefPHYh9x/LXBoAdxkE1bUrpECuKg9UEuPijqxe27exjjmMJFdLbW17diOfSmCrGFaiZAZKS2JORGpa8VWMTCkVfo25Mq408F/ai8l4CsOQHU6PLIFPwqgn3ns4J2jcNmcZ0En2s2sfTTU6Xvh2Qx33AA03Jzjkl07po2fNOX9LoHfqOvEVDmxyraNYoylcFAJBn/EZITqI7C+qjUKZVD3K5Wvur0ipDCs+75qXoAXmM+XpBaDethBZgf7WrIpe3d7v8b1Uk4lv1tpU+a62fLPHN84SbVA3jegJRpr/TBe2Q/hEdRvgxyYJ7HjYL1x7p8R+n0OaoKhko+Jb6yTJM8hUIhrZnbuKpBsNP4ETknQpmJwEUvpgXSNC4kAKyA37tPmljW0gATsOrQ8KB2gIfibSBM3IcCO9iTOPA0Te5OipVT+LyPaC/6r/gFSzw6cEk3V3iCoNeukm9zGs9qcV8CQJN6cN8W9RvPBeQitUo54JtWln8OcBglWndufWIDAuUoIsOuo8GZ4Sx6IVPkWYpUpI3q8e0tqPNIU6UVmCQASsVylvKj2Q4sUDWstVGcrTccAM/S4Cx1kJcl5O5+aG3EoVfqtvEAiM4Ob0j4Oxv5RNykgEK45BhZRFK7Reu2E3EWuWjsHV2eKayYuUsdjX3XrPHY=
 branches:
   only:
-    - master
+  - master
 notifications:
   webhooks: https://fathomless-fjord-24024.herokuapp.com/notify?secret=east-ukraine-secret
