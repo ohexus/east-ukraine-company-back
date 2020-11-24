@@ -2,13 +2,7 @@ import { Request, Response } from 'express';
 
 import { LOGS } from '../constants';
 
-import {
-  errorHandler,
-  successResponse,
-  createToken,
-  hashPassword,
-  comparePasswords,
-} from '../utils';
+import { errorHandler, successResponse, createToken, hashPassword, comparePasswords } from '../utils';
 
 import { UserService } from '../services';
 
@@ -34,10 +28,10 @@ const postSignUp = async (req: Request, res: Response) => {
         password: hashedPass,
       });
     } catch (error) {
-      return errorHandler(res, error.message);
+      return errorHandler(res, error.message, null, 401);
     }
     if (!user) {
-      return errorHandler(res, LOGS.ERROR.SIGNUP);
+      return errorHandler(res, LOGS.ERROR.SIGNUP, null, 401);
     }
 
     return successResponse(res, LOGS.SUCCESS.SIGNUP, {
@@ -55,15 +49,15 @@ const postLogin = async (req: Request, res: Response) => {
   try {
     user = await UserService.getUser({ login, password });
   } catch (error) {
-    return errorHandler(res, error.message);
+    return errorHandler(res, error.message, null, 401);
   }
   if (!user) {
-    return errorHandler(res, LOGS.ERROR.LOGIN);
+    return errorHandler(res, LOGS.ERROR.LOGIN, null, 401);
   }
 
   const compareResult = await comparePasswords(password, user.password);
   if (!compareResult) {
-    return errorHandler(res, LOGS.ERROR.PASS_COMPARING);
+    return errorHandler(res, LOGS.ERROR.INVALID_PASSWORD, null, 401);
   }
 
   return successResponse(res, LOGS.SUCCESS.LOGIN, {
