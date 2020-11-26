@@ -19,6 +19,8 @@ const postSignUp = async (req: Request, res: Response) => {
   try {
     const hashedPass = await hashPassword(password);
 
+    if (!hashedPass) throw new Error(LOGS.ERROR.PASS_HASHING);
+
     let user: UserDoc | null;
 
     try {

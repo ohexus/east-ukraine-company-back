@@ -30,6 +30,7 @@ const LOGS = {
     SIGNUP: 'Sign up failed!',
     JWT_EXPIRED: 'JWT token expired!',
     PASS_COMPARING: 'Password do not match',
+    PASS_HASHING: 'Hashing failed!',
     INVALID_PASSWORD: 'Invalid password',
     DB_CONNECTION: 'Failed DB connection!',
     DB_CLEAR: 'Failed to clear DB!',
