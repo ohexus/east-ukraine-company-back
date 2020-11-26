@@ -10,17 +10,15 @@ import {
   getLootingById,
 } from '../controllers/looting.controller';
 
-const router = Router();
+const lootingRouter = Router();
 
-router.post('/create', (req: ExtendedRequest, res: Response) => postCreateLooting(req, res));
-router.post('/finish', (req: ExtendedRequest, res: Response) => postFinishLooting(req, res));
+lootingRouter.post('/create', (req: ExtendedRequest, res: Response) => postCreateLooting(req, res));
+lootingRouter.post('/finish', (req: ExtendedRequest, res: Response) => postFinishLooting(req, res));
 
-router.post('/update-time', (req: ExtendedRequest, res: Response) => postUpdateTimeLeft(req, res));
+lootingRouter.post('/update-time', (req: ExtendedRequest, res: Response) => postUpdateTimeLeft(req, res));
 
-router.get('/all', (req: ExtendedRequest, res: Response) => getAllLootingsByUser(req, res));
-router.get('/started', (req: ExtendedRequest, res: Response) => getAllStartedLootingsByUser(req, res));
-router.get('/:id', (req: ExtendedRequest, res: Response) => getLootingById(req, res));
-
-const lootingRouter = router;
+lootingRouter.get('/all', (req: ExtendedRequest, res: Response) => getAllLootingsByUser(req, res));
+lootingRouter.get('/started', (req: ExtendedRequest, res: Response) => getAllStartedLootingsByUser(req, res));
+lootingRouter.get('/:id', (req: ExtendedRequest, res: Response) => getLootingById(req, res));
 
 export default lootingRouter;

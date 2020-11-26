@@ -10,32 +10,16 @@ import {
   deleteUnitsDB,
 } from '../controllers/unit.controller';
 
-const router = Router();
+const unitRouter = Router();
 
-router.post('/create', (req: ExtendedRequest, res: Response) =>
-  postCreateUnit(req, res),
-);
-router.post('/promote/:id', (req: ExtendedRequest, res: Response) =>
-  postPromoteUnitById(req, res),
-);
+unitRouter.post('/create', (req: ExtendedRequest, res: Response) => postCreateUnit(req, res));
+unitRouter.post('/promote/:id', (req: ExtendedRequest, res: Response) => postPromoteUnitById(req, res));
 
-router.get('/all', (req: ExtendedRequest, res: Response) =>
-  getAllUserUnits(req, res),
-);
-router.get('/all-dev', (req: ExtendedRequest, res: Response) =>
-  getAllUnits(req, res),
-);
-router.get('/:id', (req: ExtendedRequest, res: Response) =>
-  getUnitById(req, res),
-);
+unitRouter.get('/all', (req: ExtendedRequest, res: Response) => getAllUserUnits(req, res));
+unitRouter.get('/all-dev', (req: ExtendedRequest, res: Response) => getAllUnits(req, res));
+unitRouter.get('/:id', (req: ExtendedRequest, res: Response) => getUnitById(req, res));
 
-router.delete('/clearUnitsDB', (req: ExtendedRequest, res: Response) =>
-  deleteUnitsDB(req, res),
-);
-router.delete('/:id', (req: ExtendedRequest, res: Response) =>
-  deleteUnitById(req, res),
-);
-
-const unitRouter = router;
+unitRouter.delete('/clearUnitsDB', (req: ExtendedRequest, res: Response) => deleteUnitsDB(req, res));
+unitRouter.delete('/:id', (req: ExtendedRequest, res: Response) => deleteUnitById(req, res));
 
 export default unitRouter;
