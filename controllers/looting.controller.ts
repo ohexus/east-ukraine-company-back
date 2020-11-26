@@ -10,6 +10,8 @@ import { UnitService, LootingsService, LootingDataService } from '../services';
 import { createLootingRequest } from '../interfaces/http/requests/LootingRequests';
 import { Looting } from '../interfaces/entities/Looting';
 
+// TODO: params instead of body properties;
+
 const postCreateLooting = async (req: ExtendedRequest, res: Response) => {
   if (!req.userId) return errorHandler(res, LOGS.ERROR.UNAUTHORIZED);
 

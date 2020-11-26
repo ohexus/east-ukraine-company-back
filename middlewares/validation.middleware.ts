@@ -1,12 +1,13 @@
 import { Schema } from '@hapi/joi';
 import { Request, Response, NextFunction } from 'express';
+import ExtendedRequest from '../interfaces/http/requests/ExtendedRequest';
 
 import errorHandler from '../utils/errorHandler';
 
 export default function validationMiddleware(
   schema: Schema,
   property: keyof Request
-): (req: Request, res: Response, next: NextFunction) => Response<any> | void {
+): (req: ExtendedRequest, res: Response, next: NextFunction) => Response<any> | void {
   return (req, res, next) => {
     try {
       const validated = schema.validate(req[property]);
