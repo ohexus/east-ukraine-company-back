@@ -1,7 +1,6 @@
-import UserService from './user.service';
+import { AuthService, UserMoneyService, UserProfileService } from './user.service';
 import UnitService from './unit.service';
-
-import LootingsService from './looting.service';
+import LootingService from './looting.service';
 import LootingDataService from './lootingData.service';
 
-export { UserService, UnitService, LootingsService, LootingDataService };
+export { AuthService, LootingService, LootingDataService, UserMoneyService, UserProfileService, UnitService };

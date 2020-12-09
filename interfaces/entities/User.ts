@@ -7,6 +7,11 @@ export interface User {
 
   game: {
     money: number;
+    xp: {
+      level: number;
+      rank?: string;
+      total: number;
+    };
   };
 }
 

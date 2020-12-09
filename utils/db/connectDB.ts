@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import config from 'config';
 
-import { LOGS } from '../constants';
+import { LOGS } from '../../constants';
 
 import log4js from 'log4js';
 const logger = log4js.getLogger();
@@ -16,7 +16,7 @@ export default async function connectDB(): Promise<typeof mongoose | null> {
       useFindAndModify: true,
       useCreateIndex: true,
     });
-    logger.info(LOGS.DB.CONNECTION_SUCCESS);
+    logger.info(LOGS.SUCCESS.DB.CONNECTION);
     return connection;
   } catch (error) {
     logger.error(error.message);

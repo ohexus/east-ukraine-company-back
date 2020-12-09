@@ -1,25 +1,29 @@
 import { Document } from 'mongoose';
 
+import { UNITS } from '../../constants';
+
+import { LootingDoc } from './Looting';
 import Genders from '../Genders';
-import AvatarBuffer from '../AvatarBuffer';
-import { UnitRankKeys } from '../units/UnitRank';
-import { UnitXp } from '../units/UnitXp';
 
 export interface Unit {
   createdBy: string;
 
-  gender: Genders;
-  name: string;
+  bio: {
+    gender: Genders;
+    name: string;
 
-  // avatarBuffer: AvatarBuffer;
-  pathToAvatar: string;
+    pathToAvatar: string;
+  };
 
-  rank: UnitRankKeys;
+  rank: keyof typeof UNITS.RANK;
   salary: number;
 
-  xp: UnitXp;
+  xp: {
+    current: number;
+    promotion: number;
+  };
 
-  lootingId: string | null;
+  lootingId: LootingDoc['_id'] | null;
 }
 
 export interface UnitDoc extends Unit, Document {}

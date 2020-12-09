@@ -1,5 +1,5 @@
-import { UnitRankKeys } from '../../units/UnitRank';
+import { Unit } from '../../entities/Unit';
 
 export interface UnitCreateRequest {
-  rank?: UnitRankKeys;
+  rank?: Unit['rank'];
 }

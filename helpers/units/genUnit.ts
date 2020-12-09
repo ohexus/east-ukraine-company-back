@@ -3,36 +3,24 @@ import { UNITS } from '../../constants';
 import genGender from './genGender';
 import genName from './genName';
 import genAvatar from './genAvatar';
-import getPrevRankSalary from './ranks/getPrevRankSalary';
+import getPrevRankXp from './ranks/getPrevRankXp';
 
-import Genders from '../../interfaces/Genders';
-import AvatarBuffer from '../../interfaces/AvatarBuffer';
 import { Unit } from '../../interfaces/entities/Unit';
-import { UnitRankKeys } from '../../interfaces/units/UnitRank';
-import { UnitXp } from '../../interfaces/units/UnitXp';
 
-export default function genUnit(
-  rank: UnitRankKeys | undefined,
-  userId: string,
-) {
-  const gender: Genders = genGender();
-  const name: string = genName(gender);
-
-  const pathToAvatar: string = genAvatar(gender);
-
-  const unitRank: UnitRankKeys = rank || (UNITS.RANK.BARQUE as UnitRankKeys);
-  const salary: number = UNITS.SALARY[unitRank];
-
-  const xp: UnitXp = {
-    current: getPrevRankSalary(unitRank),
-    promotion: UNITS.XP_PROMOTION[unitRank],
+export default function genUnit(rank: Unit['rank'] | undefined, userId: string) {
+  const gender: Unit['bio']['gender'] = genGender();
+  const name: Unit['bio']['name'] = genName(gender);
+  const pathToAvatar: Unit['bio']['pathToAvatar'] = genAvatar(gender);
+  const unitRank: Unit['rank'] = rank || UNITS.RANK.BARQUE;
+  const salary: Unit['salary'] = UNITS.SALARY[unitRank];
+  const xp: Unit['xp'] = {
+    current: getPrevRankXp(unitRank),
+    promotion: UNITS.PROMOTION.XP[unitRank],
   };
 
   return {
     createdBy: userId,
-    name,
-    gender,
-    pathToAvatar,
+    bio: { name, gender, pathToAvatar },
     rank: unitRank,
     salary,
     xp,

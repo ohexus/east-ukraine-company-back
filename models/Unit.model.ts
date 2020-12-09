@@ -1,25 +1,24 @@
 import { Schema, model, Types } from 'mongoose';
 
-import { UNITS } from '../constants';
+import { LOGS, UNITS } from '../constants';
 
 import genUnit from '../helpers/units/genUnit';
 import getNextRank from '../helpers/units/ranks/getNextRank';
 
 import { LootingDoc } from '../interfaces/entities/Looting';
-import { UnitDoc } from '../interfaces/entities/Unit';
+import { Unit, UnitDoc } from '../interfaces/entities/Unit';
 import { UserDoc } from '../interfaces/entities/User';
-
-import { UnitRankKeys } from '../interfaces/units/UnitRank';
-import { UnitXp } from '../interfaces/units/UnitXp';
 
 const unitSchema = new Schema(
   {
     createdBy: { type: Types.ObjectId, ref: 'User', required: true },
 
-    name: { type: String, required: true },
-    gender: { type: String, required: true },
+    bio: {
+      name: { type: String, required: true },
+      gender: { type: String, required: true },
 
-    pathToAvatar: { type: String, required: true },
+      pathToAvatar: { type: String, required: true },
+    },
 
     rank: { type: String, required: true },
     salary: { type: Number, required: true },
@@ -28,7 +27,7 @@ const unitSchema = new Schema(
       current: { type: Number, default: 0, required: true },
       promotion: {
         type: Number,
-        default: UNITS.XP_PROMOTION.BARQUE,
+        default: UNITS.PROMOTION.XP.BARQUE,
         required: true,
       },
     },
@@ -45,24 +44,29 @@ const unitSchema = new Schema(
 const UnitModel = model<UnitDoc>('Unit', unitSchema);
 
 export default class UnitClass extends UnitModel {
-  static async createUnit(rank: UnitRankKeys | undefined, userId: UserDoc['_id']): Promise<UnitDoc> {
-    const newUnit = genUnit(rank, userId);
-
-    const createdDoc = await this.create(newUnit);
+  static async createUnit(rank: Unit['rank'] | undefined, userId: UserDoc['_id']): Promise<UnitDoc> {
+    const createdDoc = await this.create(genUnit(rank, userId));
 
     return createdDoc;
   }
 
-  static async promoteUnitById(id: UnitDoc['_id']): Promise<UnitDoc | null> {
-    const unitDoc = await this.findOne({ _id: id });
+  static async getUnitById(unitId: UnitDoc['_id']): Promise<UnitDoc> {
+    const unitDoc = await this.findOne({ _id: unitId });
+    if (!unitDoc) {
+      throw new Error(LOGS.ERROR.UNIT.NOT_FOUND);
+    }
 
-    if (!unitDoc) return null;
+    return unitDoc;
+  }
 
-    const nextRank: UnitRankKeys = getNextRank(unitDoc.rank);
+  static async promoteUnitById(id: UnitDoc['_id']): Promise<UnitDoc> {
+    const unitDoc = await this.getUnitById(id);
 
-    const newXp: UnitXp = {
+    const nextRank: Unit['rank'] = getNextRank(unitDoc.rank);
+
+    const newXp: Unit['xp'] = {
       current: unitDoc.xp.current,
-      promotion: UNITS.XP_PROMOTION[nextRank],
+      promotion: UNITS.PROMOTION.XP[nextRank],
     };
 
     const updatedDoc =
@@ -70,10 +74,14 @@ export default class UnitClass extends UnitModel {
         ? await this.findOneAndUpdate({ _id: id }, { rank: nextRank, xp: newXp }, { new: true })
         : unitDoc;
 
+    if (!updatedDoc) {
+      throw new Error(LOGS.ERROR.UNIT.PROMOTE);
+    }
+
     return updatedDoc;
   }
 
-  static async assignLootingToUnits(lootingId: LootingDoc['_id'], unitIds: Array<UnitDoc['_id']>): Promise<UnitDoc[]> {
+  static async assignLooting(lootingId: LootingDoc['_id'], unitIds: Array<UnitDoc['_id']>): Promise<UnitDoc[]> {
     await this.updateMany({ _id: { $in: unitIds } }, { lootingId });
 
     const unitDocs = await this.find({ _id: { $in: unitIds } });
@@ -81,18 +89,18 @@ export default class UnitClass extends UnitModel {
     return unitDocs;
   }
 
-  static async finishLootingForUnits(unitIds: Array<UnitDoc['_id']>, xpGain: LootingDoc['xpGain']): Promise<UnitDoc[]> {
+  static async finishLooting(
+    unitIds: Array<UnitDoc['_id']>,
+    xpGain: LootingDoc['reward']['xp']
+  ): Promise<UnitDoc[]> {
     await this.updateMany({ _id: { $in: unitIds } }, { lootingId: null, $inc: { 'xp.current': xpGain } });
 
     const unitDocs = await this.find({ _id: { $in: unitIds } });
+    if (!unitDocs.length) {
+      throw new Error(LOGS.ERROR.UNIT.FINISH_LOOTING);
+    }
 
     return unitDocs;
-  }
-
-  static async getUnitById(unitId: UnitDoc['_id']): Promise<UnitDoc | null> {
-    const unitDoc = await this.findOne({ _id: unitId });
-
-    return unitDoc;
   }
 
   static async getAllUserUnits(userId: UserDoc['_id']): Promise<UnitDoc[]> {
@@ -107,10 +115,14 @@ export default class UnitClass extends UnitModel {
     return unitDocs;
   }
 
-  static async deleteUnitById(unitId: UnitDoc['_id']): Promise<UnitDoc | null> {
-    const deletedUnit = await this.findByIdAndDelete(unitId);
+  static async deleteUnitById(unitId: UnitDoc['_id']): Promise<UnitDoc> {
+    const deletedUnitDoc = await this.findByIdAndDelete(unitId);
 
-    return deletedUnit;
+    if (!deletedUnitDoc) {
+      throw new Error(LOGS.ERROR.UNIT.DELETE);
+    }
+
+    return deletedUnitDoc;
   }
 
   static async deleteUnitsDB(): Promise<number | undefined> {

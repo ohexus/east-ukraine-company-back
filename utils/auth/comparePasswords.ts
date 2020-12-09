@@ -4,6 +4,6 @@ export default async function comparePasswords(inputPassword: string, comparedPa
   try {
     return await bcrypt.compare(inputPassword, comparedPassword);
   } catch (error) {
-    return false;
+    throw new Error(error.message);
   }
 }

@@ -1,15 +1,15 @@
 import { Response } from 'express';
 
-import { LOGS, STATUSES } from '../constants';
+import { LOGS, STATUSES } from '../../constants';
 
-import BackServerResponse from '../interfaces/http/responses/BackServerResponse';
+import BackServerResponse from '../../interfaces/http/responses/BackServerResponse';
 
 import log4js from 'log4js';
 const logger = log4js.getLogger();
 
 export default function successResponse(
   res: Response,
-  message: string = LOGS.SUCCESS.DEFAULT,
+  message: string = LOGS.SUCCESS.HTTP.DEFAULT,
   payload: any | null = null,
   status: number = STATUSES.RESPONSE.SUCCESS.DEFAULT
 ) {

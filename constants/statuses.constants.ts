@@ -5,6 +5,7 @@ const STATUSES = {
     },
     FAILED: {
       DEFAULT: 400,
+      UNAUTHORIZED: 401,
     },
   },
 };

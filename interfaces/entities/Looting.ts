@@ -1,12 +1,16 @@
 import { Document } from 'mongoose';
 
 export interface Looting {
-  title: string;
-  desc: string;
+  content: {
+    topic: string;
+    title: string;
+    desc: string;
+  };
 
-  topic: string;
-
-  xpGain: number;
+  reward: {
+    money: number;
+    xp: number;
+  };
 }
 
 export interface LootingDoc extends Looting, Document {

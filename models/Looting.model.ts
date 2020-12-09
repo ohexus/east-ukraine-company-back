@@ -1,4 +1,5 @@
 import { Schema, model, Types } from 'mongoose';
+import { LOGS } from '../constants';
 
 import calcTimeByXp from '../helpers/calcTimeByXp';
 
@@ -6,27 +7,34 @@ import { LootingDoc, Looting } from '../interfaces/entities/Looting';
 import { UnitDoc } from '../interfaces/entities/Unit';
 import { UserDoc } from '../interfaces/entities/User';
 
-const lootingSchema: Schema = new Schema<LootingDoc>({
-  createdBy: { type: Types.ObjectId, ref: 'User', required: true },
+const lootingSchema: Schema = new Schema<LootingDoc>(
+  {
+    createdBy: { type: Types.ObjectId, ref: 'User', required: true },
 
-  title: { type: String, required: true },
-  desc: { type: String, required: true },
+    content: {
+      topic: { type: String, required: true },
+      title: { type: String, required: true },
+      desc: { type: String, required: true },
+    },
 
-  topic: { type: String, required: true },
+    reward: {
+      money: { type: Number, default: 500 },
+      xp: { type: Number, default: 500 },
+    },
 
-  xpGain: { type: Number, default: 500 },
+    isStarted: { type: Boolean, default: false },
 
-  isStarted: { type: Boolean, default: false },
+    units: { type: [{ type: Types.ObjectId, ref: 'Unit' }], default: [] },
 
-  units: { type: [{ type: Types.ObjectId, ref: 'Unit' }], default: [] },
-
-  timer: {
-    // ms
-    left: { type: Number, required: true },
-    total: { type: Number, required: true },
-    status: { type: Boolean, default: false },
+    timer: {
+      // ms
+      left: { type: Number, required: true },
+      total: { type: Number, required: true },
+      status: { type: Boolean, default: false },
+    },
   },
-});
+  { timestamps: true }
+);
 
 const LootingModel = model<LootingDoc>('looting', lootingSchema);
 
@@ -36,17 +44,15 @@ class LootingClass extends LootingModel {
     userId: UserDoc['_id'],
     unitIds: Array<UnitDoc['_id']>
   ): Promise<LootingDoc> {
-    const { title, desc, topic, xpGain } = looting;
+    const { content, reward } = looting;
 
-    const totalTimeToFinish = calcTimeByXp(xpGain);
+    const totalTimeToFinish = calcTimeByXp(reward.xp);
 
     try {
       const createdDoc = await this.create({
         createdBy: userId,
-        title,
-        desc,
-        topic,
-        xpGain,
+        content,
+        reward,
         isStarted: true,
         units: unitIds,
         timer: {
@@ -58,81 +64,81 @@ class LootingClass extends LootingModel {
 
       return createdDoc;
     } catch (error) {
-      throw new Error(error);
+      throw new Error(error.message);
     }
   }
 
-  static async finishLooting(lootingId: LootingDoc['_id']): Promise<LootingDoc | null> {
+  static async getLootingById(id: LootingDoc['_id']): Promise<LootingDoc> {
     try {
-      const foundDoc = await this.findById(lootingId);
+      const lootingDoc = await this.findOne({ _id: id });
 
-      if (!foundDoc) return null;
+      if (!lootingDoc) {
+        throw new Error(LOGS.ERROR.LOOTING.NOT_FOUND);
+      }
 
-      foundDoc.isStarted = false;
-      foundDoc.timer = {
-        total: foundDoc.timer.total,
-        left: foundDoc.timer.left,
+      return lootingDoc;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  static async finishLooting(lootingId: LootingDoc['_id']): Promise<LootingDoc> {
+    try {
+      const lootingDoc = await this.getLootingById(lootingId);
+
+      lootingDoc.isStarted = false;
+      lootingDoc.timer = {
+        total: lootingDoc.timer.total,
+        left: lootingDoc.timer.left,
         status: false,
       };
 
-      await foundDoc.save();
+      await lootingDoc.save();
 
-      return foundDoc;
+      return lootingDoc;
     } catch (error) {
-      throw new Error(error);
+      throw new Error(error.message);
     }
   }
 
   static async updateTimeLeft(
     lootingId: LootingDoc['_id'],
     timeLeft: LootingDoc['timer']['left']
-  ): Promise<LootingDoc | null> {
+  ): Promise<LootingDoc> {
     try {
-      const foundDoc = await this.findById(lootingId);
+      const lootingDoc = await this.getLootingById(lootingId);
 
-      if (!foundDoc) return null;
+      lootingDoc.timer.left = timeLeft || 0;
+      lootingDoc.timer.status = !!timeLeft;
 
-      foundDoc.timer.left = timeLeft || 0;
-      foundDoc.timer.status = !!timeLeft;
+      await lootingDoc.save();
 
-      await foundDoc.save();
-
-      return foundDoc;
+      return lootingDoc;
     } catch (error) {
-      throw new Error(error);
+      throw new Error(error.message);
     }
   }
 
   static async getAllLootingsByUser(userId: UserDoc['_id']): Promise<LootingDoc[]> {
     try {
-      const foundDocs = await this.find({ createdBy: userId });
+      const lootingDocs = await this.find({ createdBy: userId });
 
-      return foundDocs;
+      return lootingDocs;
     } catch (error) {
-      throw new Error(error);
+      throw new Error(error.message);
     }
   }
 
   static async getAllStartedLootings(userId: UserDoc['_id']): Promise<LootingDoc[]> {
     try {
-      const foundDocs = await this.find({
+      const lootingDocs = await this.find({
         createdBy: userId,
         isStarted: true,
       });
 
-      return foundDocs;
+      return lootingDocs;
     } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  static async getLootingById(id: LootingDoc['_id']): Promise<LootingDoc | null> {
-    try {
-      const foundDoc = await this.findOne({ _id: id });
-
-      return foundDoc;
-    } catch (error) {
-      throw new Error(error);
+      throw new Error(error.message);
     }
   }
 }

@@ -1,15 +1,13 @@
-import connectDB from './dbConnection';
-import errorHandler from './errorHandler';
-import successResponse from './successResponse';
+import { connectDB } from './db';
 import { comparePasswords, createToken, hashPassword } from './auth';
-import validateUnitPromotion from './validateUnitPromotion';
+import { dataAPI, errorHandler, successResponse } from './http';
 
 export {
-  connectDB,
-  errorHandler,
-  successResponse,
   comparePasswords,
+  connectDB,
   createToken,
+  dataAPI,
+  errorHandler,
   hashPassword,
-  validateUnitPromotion,
+  successResponse,
 };

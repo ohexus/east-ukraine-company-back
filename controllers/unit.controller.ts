@@ -1,117 +1,80 @@
 import { Response } from 'express';
-import ExtendedRequest from '../interfaces/http/requests/ExtendedRequest';
+import { ExtendedRequest } from '../interfaces/http/requests/ExtendedRequest';
 
 import { LOGS } from '../constants';
 
-import { errorHandler, successResponse, validateUnitPromotion } from '../utils';
+import { errorHandler, successResponse } from '../utils';
+
 import { UnitService } from '../services';
 
-const postCreateUnit = async (req: ExtendedRequest, res: Response) => {
-  if (!req.userId) return errorHandler(res, LOGS.ERROR.UNAUTHORIZED);
+import { Unit, UnitDoc } from '../interfaces/entities/Unit';
 
+export const isEnough = (total: number, amount: number) => total - amount >= 0;
+
+export const postCreateUnit = async (req: ExtendedRequest, res: Response): Promise<Response> => {
   try {
-    const unit = await UnitService.createUnit(req.body.rank, req.userId);
+    const { rank } = req.body;
 
-    return successResponse(res, LOGS.SUCCESS.UNIT_CREATE, unit);
-  } catch {
-    return errorHandler(res, LOGS.ERROR.UNIT_CREATE);
-  }
-};
+    const unit: UnitDoc = await UnitService.createUnit(rank as Unit['rank'], req.userId);
 
-const postPromoteUnitById = async (req: ExtendedRequest, res: Response) => {
-  const { id } = req.params;
-
-  if (!id) return errorHandler(res, LOGS.ERROR.INVALID_REQUEST);
-
-  try {
-    const unit = await UnitService.getUnitById(id);
-
-    if (!validateUnitPromotion(unit)) {
-      return errorHandler(res, LOGS.ERROR.UNIT_PROMOTE_UNABLE);
-    }
-
-    const updatedUnit = await UnitService.promoteUnitById(id);
-
-    return successResponse(res, LOGS.SUCCESS.UNIT_PROMOTE, updatedUnit);
-  } catch (error) {
-    return errorHandler(res, LOGS.ERROR.UNIT_PROMOTE);
-  }
-};
-
-const getUnitById = async (req: ExtendedRequest, res: Response) => {
-  const { id } = req.params;
-
-  if (!id) return errorHandler(res, LOGS.ERROR.INVALID_REQUEST);
-
-  try {
-    const unit = await UnitService.getUnitById(id as string);
-
-    if (!unit) return errorHandler(res, LOGS.ERROR.UNIT_NOT_EXIST);
-
-    return successResponse(res, LOGS.SUCCESS.GET_UNIT, unit);
+    return successResponse(res, LOGS.SUCCESS.UNIT.CREATE, unit);
   } catch (error) {
     return errorHandler(res, error.message);
   }
 };
 
-const getAllUserUnits = async (req: ExtendedRequest, res: Response) => {
-  if (!req.userId) return errorHandler(res, LOGS.ERROR.UNAUTHORIZED);
-
+export const postPromoteUnitById = async (req: ExtendedRequest, res: Response): Promise<Response> => {
   try {
-    const units = await UnitService.getAllUserUnits(req.userId);
+    const { id } = req.params;
 
-    return successResponse(res, LOGS.SUCCESS.GET_UNITS, units);
+    const updatedUnit: UnitDoc = await UnitService.promoteUnitById(id, req.userId);
+
+    return successResponse(res, LOGS.SUCCESS.UNIT.PROMOTE, updatedUnit);
   } catch (error) {
-    return errorHandler(res, LOGS.ERROR.GET_UNITS);
+    return errorHandler(res, error.message);
   }
 };
 
-const getAllUnits = async (req: ExtendedRequest, res: Response) => {
+export const getUnitById = async (req: ExtendedRequest, res: Response): Promise<Response> => {
   try {
-    const units = await UnitService.getAllUnits();
+    const { id } = req.params;
 
-    return successResponse(res, LOGS.SUCCESS.GET_UNITS, units);
+    const unit: UnitDoc = await UnitService.getUnitById(id as string);
+
+    return successResponse(res, LOGS.SUCCESS.UNIT.GET_ONE, unit);
   } catch (error) {
-    return errorHandler(res, LOGS.ERROR.GET_UNITS);
+    return errorHandler(res, error.message);
   }
 };
 
-const deleteUnitById = async (req: ExtendedRequest, res: Response) => {
-  const { id } = req.params;
-
-  if (!id) return errorHandler(res, LOGS.ERROR.INVALID_REQUEST);
-
+export const getAllUserUnits = async (req: ExtendedRequest, res: Response): Promise<Response> => {
   try {
-    const deletedUnit = await UnitService.deleteUnitById(id);
+    const units: UnitDoc[] = await UnitService.getAllUserUnits(req.userId);
 
-    return successResponse(res, LOGS.SUCCESS.UNIT_DELETE, deletedUnit);
+    return successResponse(res, LOGS.SUCCESS.UNIT.GET_MANY, units);
   } catch (error) {
-    return errorHandler(res, LOGS.ERROR.UNIT_DELETE);
+    return errorHandler(res, error.message);
   }
 };
 
-const deleteUnitsDB = async (req: ExtendedRequest, res: Response) => {
+export const getAllUnits = async (req: ExtendedRequest, res: Response): Promise<Response> => {
   try {
-    const deletedCount: number | undefined = await UnitService.deleteUnitsDB();
+    const units: UnitDoc[] = await UnitService.getAllUnits();
 
-    if (deletedCount) {
-      return successResponse(res, LOGS.SUCCESS.DB_CLEAR, deletedCount);
-    } else {
-      return successResponse(res, LOGS.SUCCESS.DB_CLEAR_NOTHING, {
-        deletedCount,
-      });
-    }
+    return successResponse(res, LOGS.SUCCESS.UNIT.GET_MANY, units);
   } catch (error) {
-    return errorHandler(res, LOGS.ERROR.DB_CLEAR);
+    return errorHandler(res, error.message);
   }
 };
 
-export {
-  postCreateUnit,
-  postPromoteUnitById,
-  getUnitById,
-  getAllUserUnits,
-  getAllUnits,
-  deleteUnitById,
-  deleteUnitsDB,
+export const deleteUnitById = async (req: ExtendedRequest, res: Response): Promise<Response> => {
+  try {
+    const { id } = req.params;
+
+    const deletedUnit: UnitDoc = await UnitService.deleteUnitById(id);
+
+    return successResponse(res, LOGS.SUCCESS.UNIT.DELETE, deletedUnit);
+  } catch (error) {
+    return errorHandler(res, error.message);
+  }
 };

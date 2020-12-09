@@ -1,5 +1,6 @@
 import { Request, Response, Router } from 'express';
-import { postSignUp, postLogin } from '../controllers/auth.controller';
+
+import { postSignUp, postLogin } from '../controllers/user.controller';
 
 import validationMiddleware from '../middlewares/validation.middleware';
 import authValidator from '../validators/auth.validator';

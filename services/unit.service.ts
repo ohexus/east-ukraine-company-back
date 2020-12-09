@@ -1,70 +1,59 @@
 import { UnitClass } from '../models';
-import { UnitDoc } from '../interfaces/entities/Unit';
-import { UnitRankKeys } from '../interfaces/units/UnitRank';
 
-class UnitsService {
-  async createUnit(
-    rank: UnitRankKeys | undefined,
-    userId: string,
-  ): Promise<UnitDoc> {
-    const unitDoc = await UnitClass.createUnit(rank, userId);
+import { UNITS, LOGS } from '../constants';
 
-    return unitDoc;
+import { UserMoneyService } from '.';
+
+import { Unit, UnitDoc } from '../interfaces/entities/Unit';
+import { UserDoc } from '../interfaces/entities/User';
+import { LootingDoc } from '../interfaces/entities/Looting';
+
+class UnitService {
+  async createUnit(rank: Unit['rank'], userId: UserDoc['_id']): Promise<UnitDoc> {
+    await UserMoneyService.checkThenDecreaseMoney(userId, UNITS.COST[rank]);
+
+    return await UnitClass.createUnit(rank, userId);
   }
 
-  async promoteUnitById(unitId: string): Promise<UnitDoc | null> {
-    const unitDoc = await UnitClass.promoteUnitById(unitId);
+  async promoteUnitById(unitId: UnitDoc['_id'], userId: UserDoc['_id']): Promise<UnitDoc> {
+    const unit = await UnitClass.getUnitById(unitId);
 
-    return unitDoc;
+    if (unit.xp.current > UNITS.PROMOTION.XP[unit.rank]) {
+      await UserMoneyService.checkThenDecreaseMoney(userId, UNITS.PROMOTION.COST[unit.rank]);
+
+      return await UnitClass.promoteUnitById(unitId);
+    } else {
+      throw new Error(LOGS.ERROR.UNIT.PROMOTE_UNABLE);
+    }
   }
 
-  async assignLootingToUnits(
-    lootingId: string,
-    unitIds: string[],
-  ): Promise<UnitDoc[]> {
-    const unitDocs = await UnitClass.assignLootingToUnits(lootingId, unitIds);
-
-    return unitDocs;
+  async assignLooting(lootingId: LootingDoc['_id'], unitIds: Array<UnitDoc['_id']>): Promise<UnitDoc[]> {
+    return await UnitClass.assignLooting(lootingId, unitIds);
   }
 
-  async finishLootingForUnits(
-    unitIds: string[],
-    xpGain: number,
-  ): Promise<UnitDoc[]> {
-    const unitDocs = await UnitClass.finishLootingForUnits(unitIds, xpGain);
-
-    return unitDocs;
+  async finishLooting(unitIds: Array<UnitDoc['_id']>, xpGain: LootingDoc['reward']['xp']): Promise<UnitDoc[]> {
+    return await UnitClass.finishLooting(unitIds, xpGain);
   }
 
-  async getUnitById(unitId: string): Promise<UnitDoc | null> {
-    const unitDoc = await UnitClass.getUnitById(unitId);
-
-    return unitDoc;
+  async getUnitById(unitId: UnitDoc['_id']): Promise<UnitDoc> {
+    return await UnitClass.getUnitById(unitId);
   }
 
-  async getAllUserUnits(userId: string): Promise<UnitDoc[]> {
-    const unitDocs = await UnitClass.getAllUserUnits(userId);
-
-    return unitDocs;
+  async getAllUserUnits(userId: UserDoc['_id']): Promise<UnitDoc[]> {
+    return await UnitClass.getAllUserUnits(userId);
   }
 
   async getAllUnits(): Promise<UnitDoc[]> {
-    const unitDocs = await UnitClass.getAllUnits();
-
-    return unitDocs;
+    return await UnitClass.getAllUnits();
   }
 
-  async deleteUnitById(unitId: string): Promise<UnitDoc | null> {
-    const unitDoc = await UnitClass.deleteUnitById(unitId);
-
-    return unitDoc;
+  async deleteUnitById(unitId: UnitDoc['_id']): Promise<UnitDoc> {
+    return await UnitClass.deleteUnitById(unitId);
   }
 
   async deleteUnitsDB(): Promise<number | undefined> {
-    const deletedCount = await UnitClass.deleteUnitsDB();
-
-    return deletedCount;
+    return await UnitClass.deleteUnitsDB();
   }
 }
 
-export default new UnitsService();
+export default new UnitService();
