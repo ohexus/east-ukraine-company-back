@@ -105,13 +105,13 @@ export default class UserClass extends UserModel {
     amount: UserDoc['game']['money']
   ): Promise<UserDoc['game']['money']> {
     try {
+      const userDoc = await this.getUserById(userId);
+
       const userMoney: UserDoc['game']['money'] = await this.updateOne(
-        userId,
-        { $inc: { 'game.money': -amount } },
+        userDoc,
+        { 'game.money': userDoc.game.money - amount },
         { new: true }
-      ).then((doc) => {
-        return doc.game.money;
-      });
+      ).then((doc) => doc.game.money);
 
       return userMoney;
     } catch (error) {
@@ -121,9 +121,7 @@ export default class UserClass extends UserModel {
 
   static async getMoney(userId: UserDoc['_id']): Promise<User['game']['money']> {
     try {
-      const userMoney: UserDoc['game']['money'] = await this.getUserById(userId).then((doc) => {
-        return doc.game.money;
-      });
+      const userMoney: UserDoc['game']['money'] = await this.getUserById(userId).then((doc) => doc.game.money);
 
       return userMoney;
     } catch (error) {
@@ -136,13 +134,13 @@ export default class UserClass extends UserModel {
     amount: UserDoc['game']['money']
   ): Promise<UserDoc['game']['money']> {
     try {
+      const userDoc = await this.getUserById(userId);
+
       const userMoney: UserDoc['game']['money'] = await this.updateOne(
-        userId,
+        userDoc,
         { $inc: { 'game.money': amount } },
         { new: true }
-      ).then((doc) => {
-        return doc.game.money;
-      });
+      ).then((doc) => doc.game.money);
 
       return userMoney;
     } catch (error) {
@@ -152,13 +150,13 @@ export default class UserClass extends UserModel {
 
   static async setMoney(userId: UserDoc['_id'], amount: UserDoc['game']['money']): Promise<UserDoc['game']['money']> {
     try {
+      const userDoc = await this.getUserById(userId);
+
       const userMoney: UserDoc['game']['money'] = await this.updateOne(
-        userId,
+        userDoc,
         { 'game.money': amount },
         { new: true }
-      ).then((doc) => {
-        return doc.game.money;
-      });
+      ).then((doc) => doc.game.money);
 
       return userMoney;
     } catch (error) {
